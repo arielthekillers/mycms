@@ -1,0 +1,148 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use App\Core\Application;
+use App\Core\Auth\AuthManager;
+use App\Core\Migrator;
+use Database\Seeders\DefaultModulesSeeder;
+use Database\Seeders\RolePermissionSeeder;
+use Database\Seeders\ThemeSeeder;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+$app = Application::bootstrap(dirname(__DIR__));
+$migrator = new Migrator($app->db, $app->migrationsPath());
+
+$command = $argv[1] ?? null;
+
+match ($command) {
+    'migrate' => runMigrate($migrator),
+    'migrate:rollback' => runRollback($migrator),
+    'migrate:status' => runStatus($migrator),
+    'db:seed' => runSeed($app),
+    'make:user' => runMakeUser($app),
+    'queue:work' => runQueueWork($app, $argv[2] ?? 'default'),
+    'cache:clear' => runCacheClear($app),
+    default => printUsage(),
+};
+
+function runMigrate(Migrator $migrator): void
+{
+    $ran = $migrator->migrate();
+
+    if (empty($ran)) {
+        echo "Nothing to migrate. Already up to date.\n";
+        return;
+    }
+
+    foreach ($ran as $name) {
+        echo "Migrated: {$name}\n";
+    }
+}
+
+function runRollback(Migrator $migrator): void
+{
+    $reverted = $migrator->rollback();
+
+    if (empty($reverted)) {
+        echo "Nothing to roll back.\n";
+        return;
+    }
+
+    foreach ($reverted as $name) {
+        echo "Rolled back: {$name}\n";
+    }
+}
+
+function runStatus(Migrator $migrator): void
+{
+    foreach ($migrator->status() as $row) {
+        $mark = $row['applied'] ? '[x]' : '[ ]';
+        echo "{$mark} {$row['migration']}\n";
+    }
+}
+
+function runSeed(Application $app): void
+{
+    // Modules first, so their auto-generated permissions exist before
+    // RolePermissionSeeder assigns "all current permissions" to super-admin.
+    (new DefaultModulesSeeder())->run($app->db);
+    echo "Seeded: content_modules (Agenda, Prestasi, Pengajar, Galeri, Fasilitas, Alumni)\n";
+
+    (new RolePermissionSeeder())->run($app->db);
+    echo "Seeded: roles & permissions (super-admin, editor, author)\n";
+
+    (new ThemeSeeder())->run($app->db);
+    echo "Seeded: theme, layouts, templates, widget areas, widgets\n";
+}
+
+function runMakeUser(Application $app): void
+{
+    fwrite(STDOUT, "Name: ");
+    $name = trim(fgets(STDIN));
+
+    fwrite(STDOUT, "Username: ");
+    $username = trim(fgets(STDIN));
+
+    fwrite(STDOUT, "Email: ");
+    $email = trim(fgets(STDIN));
+
+    fwrite(STDOUT, "Password: ");
+    $password = trim(fgets(STDIN));
+
+    fwrite(STDOUT, "Role [super-admin]: ");
+    $role = trim(fgets(STDIN)) ?: 'super-admin';
+
+    $userId = $app->db->insert(
+        'INSERT INTO users (name, username, email, password_hash, is_active)
+         VALUES (:name, :username, :email, :password_hash, 1)',
+        [
+            'name' => $name,
+            'username' => $username,
+            'email' => $email,
+            'password_hash' => AuthManager::hashPassword($password),
+        ]
+    );
+
+    $app->rbac->assignRole($userId, $role);
+
+    echo "User #{$userId} created and assigned role '{$role}'.\n";
+}
+
+function runQueueWork(Application $app, string $queue = 'default'): void
+{
+    echo "Working queue '{$queue}'. Press Ctrl+C to stop.\n";
+
+    while (true) {
+        $processed = $app->queue->workOnce($queue);
+
+        if (!$processed) {
+            usleep(500_000); // no jobs — avoid busy-looping the CPU
+        }
+    }
+}
+
+function runCacheClear(Application $app): void
+{
+    $app->cache->flush();
+    echo "Cache cleared.\n";
+}
+
+function printUsage(): void
+{
+    echo <<<TXT
+    Pesantren CMS Console
+
+    Usage:
+      php bin/console migrate            Run all pending migrations
+      php bin/console migrate:rollback   Roll back the last batch
+      php bin/console migrate:status     Show migration status
+      php bin/console db:seed            Seed default modules + roles/permissions
+      php bin/console make:user          Interactively create a user + assign a role
+      php bin/console queue:work [queue] Process background jobs (default queue: "default")
+      php bin/console cache:clear        Flush the full-page/fragment cache
+
+    TXT;
+}

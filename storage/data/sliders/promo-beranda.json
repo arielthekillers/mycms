@@ -1,0 +1,22 @@
+{
+    "id": "promo-beranda",
+    "name": "Promo Beranda",
+    "slides": [
+        {
+            "type": "hero",
+            "image": "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&q=80&w=2070",
+            "title": "Generasi Islam Berkarakter dan Berdaya Saing",
+            "description": "Melalui pendidikan berasrama yang modern, Darussalam Bogor membina santri dengan keseimbangan antara ilmu pengetahuan, pembentukan karakter, dan pemahaman nilai-nilai Islam, sehingga lahir generasi yang berilmu dan berakhlak.",
+            "button_text": "Learn more >",
+            "button_link": "#tentang"
+        },
+        {
+            "type": "hero",
+            "image": "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=2070",
+            "title": "Pendaftaran Santri Baru Telah Dibuka",
+            "description": "Mari bergabung bersama ribuan santri lainnya untuk merajut masa depan gemilang bersama Pondok Pesantren Darussalam Bogor.",
+            "button_text": "Daftar Sekarang",
+            "button_link": "/pendaftaran"
+        }
+    ]
+}

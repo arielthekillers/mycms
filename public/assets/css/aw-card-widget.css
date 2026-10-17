@@ -1,0 +1,112 @@
+:root {
+  --aw-card-bg: #ffffff;
+  --aw-card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --aw-card-radius-default: 0.5rem; 
+  --aw-text-main: #1f2937;
+  --aw-text-muted: #6b7280;
+  --aw-primary: #1bb2a6; 
+  --aw-border-color: #e5e7eb;
+}
+
+/* =========================================
+   WIDGET CONTAINER (JUDUL, INTRO, EXTRO)
+   ========================================= */
+.aw-widget-section {
+  padding: 3rem 0; /* Jarak ruang kosong atas dan bawah */
+  font-family: inherit;
+}
+
+/* Bagian Atas (Header & Intro) */
+.aw-widget-header { margin-bottom: 2rem; }
+.aw-widget-header--center { text-align: center; }
+.aw-widget-header--left { text-align: left; }
+
+.aw-widget-title { font-size: 2rem; font-weight: 700; color: var(--aw-text-main); margin: 0 0 0.5rem 0; line-height: 1.2; }
+.aw-widget-intro { font-size: 1.125rem; color: var(--aw-text-muted); max-width: 65ch; margin: 0; }
+.aw-widget-header--center .aw-widget-intro { margin-left: auto; margin-right: auto; }
+
+/* Bagian Bawah (Footer & Extro) */
+.aw-widget-footer { margin-top: 2.5rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.aw-widget-extro { font-size: 1rem; color: var(--aw-text-muted); margin: 0; }
+
+/* =========================================
+   STRUKTUR CARD (GRID & ELEMEN)
+   ========================================= */
+.aw-card-grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.aw-card-grid--cols-2 { grid-template-columns: repeat(2, 1fr); }
+.aw-card-grid--cols-3 { grid-template-columns: repeat(3, 1fr); }
+.aw-card-grid--cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 768px) {
+  .aw-card-grid--cols-2, .aw-card-grid--cols-3, .aw-card-grid--cols-4 { grid-template-columns: 1fr; }
+}
+
+.aw-card-grid--scroll {
+  display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 1.5rem; padding-bottom: 1.5rem;
+  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; 
+}
+.aw-card-grid--scroll::-webkit-scrollbar { display: none; }
+.aw-card-grid--scroll .aw-card { flex: 0 0 85%; scroll-snap-align: center; }
+@media (min-width: 768px) {
+  .aw-card-grid--scroll .aw-card { flex: 0 0 calc(33.333% - 1rem); scroll-snap-align: start; }
+}
+
+.aw-card { background-color: var(--aw-card-bg); border-radius: var(--aw-card-radius-default); box-shadow: var(--aw-card-shadow); overflow: hidden; display: flex; flex-direction: column; position: relative; transition: all 0.3s ease; }
+.aw-card--hoverable:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+.aw-card__image-wrapper { width: 100%; height: 220px; position: relative; flex-shrink: 0; }
+.aw-card__image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+.aw-card__header { padding: 1.25rem 1.25rem 0 1.25rem; }
+.aw-card__body { padding: 1.25rem; flex-grow: 1; }
+.aw-card__footer { padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; border-top: 1px solid var(--aw-border-color); }
+.aw-card__title { margin: 0 0 0.5rem 0; font-size: 1.25rem; font-weight: 600; color: var(--aw-text-main); }
+.aw-card__text { margin: 0; font-size: 0.875rem; color: var(--aw-text-muted); line-height: 1.5; }
+
+/* Komponen Card (Tombol, Badge, dll) */
+.aw-card__btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; text-decoration: none; cursor: pointer; transition: 0.2s; }
+.aw-card__btn--solid { background-color: var(--aw-primary); color: #fff; border: 1px solid var(--aw-primary); }
+.aw-card__btn--solid:hover { opacity: 0.9; }
+.aw-card__btn--outline { background-color: transparent; color: var(--aw-primary); border: 1px solid var(--aw-primary); }
+.aw-card__btn--outline:hover { background-color: var(--aw-primary); color: #fff; }
+.aw-card__btn--text { padding: 0; background: none; color: var(--aw-primary); }
+.aw-card__btn--text:hover { text-decoration: underline; }
+.aw-card__btn--block { width: 100%; }
+
+.aw-badge { position: absolute; top: 1rem; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; color: #fff; z-index: 10; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.aw-badge--left { left: 1rem; } .aw-badge--right { right: 1rem; } .aw-badge--center { left: 50%; transform: translateX(-50%); }
+.aw-badge--red { background-color: #ef4444; } .aw-badge--green { background-color: #10b981; } .aw-badge--dark { background-color: rgba(0,0,0,0.75); backdrop-filter: blur(4px); }
+
+/* FITUR PREMIUM */
+.aw-card--dark { --aw-card-bg: #1f2937; --aw-text-main: #f9fafb; --aw-text-muted: #9ca3af; --aw-border-color: #374151; }
+.aw-card--overlay { min-height: 350px; justify-content: flex-end; }
+.aw-card--overlay .aw-card__image-wrapper { position: absolute; inset: 0; height: 100%; z-index: 0; }
+.aw-card--overlay .aw-card__image-wrapper::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%); }
+.aw-card--overlay .aw-card__body, .aw-card--overlay .aw-card__footer { position: relative; z-index: 1; border-color: rgba(255,255,255,0.1); }
+.aw-card--overlay .aw-card__title, .aw-card--overlay .aw-card__text { color: #ffffff; }
+
+.aw-card__author { display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem; }
+.aw-card__avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+.aw-card__author-info { font-size: 0.75rem; color: var(--aw-text-muted); line-height: 1.3; }
+.aw-card__author-name { font-weight: 600; color: var(--aw-text-main); display: block; }
+
+.aw-card__price-box { margin-bottom: 1.5rem; text-align: center; }
+.aw-card__price-amount { font-size: 3rem; font-weight: 800; color: var(--aw-text-main); display: flex; justify-content: center; align-items: flex-start; }
+.aw-card__price-currency { font-size: 1.25rem; margin-top: 0.5rem; }
+.aw-card__price-period { font-size: 1rem; color: var(--aw-text-muted); font-weight: 400; align-self: flex-end; margin-bottom: 0.5rem; }
+.aw-card__features { list-style: none; padding: 0; margin: 0 0 1.5rem 0; font-size: 0.875rem; }
+.aw-card__features li { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; color: var(--aw-text-muted); }
+.aw-card__features li::before { content: "✓"; color: #10b981; font-weight: bold; }
+.aw-card__features li.disabled { opacity: 0.5; }
+.aw-card__features li.disabled::before { content: "✕"; color: #ef4444; }
+
+.aw-card__stat-flex { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+.aw-card__stat-icon { width: 48px; height: 48px; border-radius: 50%; background-color: rgba(27, 178, 166, 0.1); color: var(--aw-primary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+.aw-card__stat-value { font-size: 2rem; font-weight: 700; color: var(--aw-text-main); }
+.aw-card__stat-trend { font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 9999px; }
+.aw-card__stat-trend--up { color: #10b981; background: #d1fae5; }
+.aw-card__stat-trend--down { color: #ef4444; background: #fee2e2; }
+
+.aw-skeleton { background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%); background-size: 200% 100%; animation: aw-loading 1.5s infinite; border-radius: 0.25rem; }
+.aw-card--dark .aw-skeleton { background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%); }
+@keyframes aw-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.aw-skeleton-text { height: 1rem; margin-bottom: 0.5rem; width: 100%; }
+.aw-skeleton-title { height: 1.5rem; width: 70%; margin-bottom: 1rem; }
+.aw-skeleton-avatar { width: 36px; height: 36px; border-radius: 50%; }

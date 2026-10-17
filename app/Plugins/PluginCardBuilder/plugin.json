@@ -1,0 +1,7 @@
+{
+    "id": "PluginCardBuilder",
+    "name": "Card Builder (Advanced)",
+    "description": "Buat widget card yang responsif dengan jumlah card tak terbatas (Grid, Scroll, dll).",
+    "version": "1.0.0",
+    "admin_url": "/admin/panel/card-builder"
+}

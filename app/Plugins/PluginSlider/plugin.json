@@ -1,0 +1,7 @@
+{
+    "id": "PluginSlider",
+    "name": "Manajer Slider",
+    "description": "Kelola slideshow dinamis (Splide.js) untuk berbagai lokasi seperti beranda, widget, dan konten artikel.",
+    "version": "1.0.0",
+    "admin_url": "/admin/panel/sliders"
+}
