@@ -102,13 +102,20 @@
         
         let html = '';
         typeDef.form_fields.forEach(field => {
-            html += `<label style="display: block; margin-bottom: 0.5rem;">
-                <span style="display: block; margin-bottom: 0.25rem; font-weight: 500;">${Admin.escapeHtml(field.label)}</span>`;
+            html += `<label style="display: block; margin-bottom: 0.75rem;">
+                <span style="display: block; margin-bottom: 0.35rem; font-weight: 500; font-size: 0.9rem; color: #334155;">${Admin.escapeHtml(field.label)}</span>`;
                 
             if (field.type === 'textarea') {
-                html += `<textarea name="dynamic_${field.name}" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px; min-height: 80px;">${Admin.escapeHtml(String(field.default || ''))}</textarea>`;
+                html += `<textarea name="dynamic_${field.name}" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px; min-height: 80px; font-family: inherit;">${Admin.escapeHtml(String(field.default || ''))}</textarea>`;
+            } else if (field.type === 'select') {
+                html += `<select name="dynamic_${field.name}" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; font-size: 0.9rem; color: #1e293b;">`;
+                for (const [val, optLabel] of Object.entries(field.options || {})) {
+                    const isSelected = String(field.default || '') === String(val) ? 'selected' : '';
+                    html += `<option value="${Admin.escapeHtml(String(val))}" ${isSelected}>${Admin.escapeHtml(String(optLabel))}</option>`;
+                }
+                html += `</select>`;
             } else {
-                html += `<input type="${field.type}" name="dynamic_${field.name}" value="${Admin.escapeHtml(String(field.default || ''))}" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;">`;
+                html += `<input type="${field.type}" name="dynamic_${field.name}" value="${Admin.escapeHtml(String(field.default || ''))}" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px;">`;
             }
             html += `</label>`;
         });

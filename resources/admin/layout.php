@@ -27,6 +27,7 @@
                 <a href="/admin/panel/themes" data-page="themes" data-permission="theme.manage">Tema</a>
                 <a href="/admin/panel/widgets" data-page="widgets" data-permission="theme.manage">Widget</a>
                 <a href="/admin/panel/menus" data-page="menus" data-permission="menus.manage">Menu</a>
+                <a href="/admin/panel/sliders" data-page="sliders">Slider</a>
                 
                 <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 0.5rem 1rem;"></div>
                 

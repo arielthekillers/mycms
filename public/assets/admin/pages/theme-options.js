@@ -20,9 +20,6 @@
             
             document.getElementById('opt-menu-header').value = options.menu_header || '';
             document.getElementById('opt-menu-footer').value = options.menu_footer || '';
-            if(document.getElementById('opt-homepage-slider')) {
-                document.getElementById('opt-homepage-slider').value = options.homepage_slider || '';
-            }
         } catch (e) {
             Admin.alert(e.message, true);
         }
@@ -42,7 +39,6 @@
             header_style: document.getElementById('opt-header-style') ? document.getElementById('opt-header-style').value : 'auto',
             menu_header: document.getElementById('opt-menu-header').value,
             menu_footer: document.getElementById('opt-menu-footer').value,
-            homepage_slider: document.getElementById('opt-homepage-slider') ? document.getElementById('opt-homepage-slider').value : '',
         };
 
         try {

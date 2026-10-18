@@ -12,7 +12,7 @@ final class CsrfMiddleware
 {
     public function __invoke(Request $request, Response $response, callable $next): Response
     {
-        if (in_array($request->method(), ['GET', 'HEAD', 'OPTIONS'], true)) {
+        if (in_array($request->method(), ['GET', 'HEAD', 'OPTIONS'], true) || $request->uri() === '/api/track') {
             return $next($request, $response);
         }
 

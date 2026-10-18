@@ -218,31 +218,15 @@
     <div id="tab-beranda" class="tab-content" style="display: none; padding: 0 2rem;">
         <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1rem; color: var(--brand, #0f766e); border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">Pengaturan Hero (Bagian Atas)</h3>
         
-        <?php
-        $slidersDir = $app->basePath . '/storage/data/sliders';
-        $availableSliders = [];
-        if (is_dir($slidersDir)) {
-            foreach (glob($slidersDir . '/*.json') as $file) {
-                $data = json_decode(file_get_contents($file), true);
-                if ($data && !empty($data['id'])) {
-                    $availableSliders[] = $data;
-                }
-            }
-        }
-        ?>
-
         <div class="setting-group">
             <div class="setting-info">
-                <label for="opt-homepage-slider">Gunaan Slider / Banner Dinamis</label>
-                <span>Pilih slider yang akan ditampilkan di bagian paling atas beranda. Anda dapat membuatnya di menu <strong>Manajer Slider</strong>.<br><br><em>Pastikan user untuk menginstall plugin slider jika ingin menggunakan fitur ini.</em></span>
+                <label>Area Hero Beranda (Slider / Banner)</label>
+                <span>Sesuai arsitektur tema, bagian atas beranda dikelola sepenuhnya melalui <strong><a href="/admin/panel/widgets" style="color: var(--brand, #0f766e); text-decoration: underline;">Pengelola Widget</a></strong> pada area <strong>Beranda - Hero Section</strong>. Jika area tersebut kosong, tidak ada banner yang ditampilkan.</span>
             </div>
-            <div class="setting-input">
-                <select id="opt-homepage-slider">
-                    <option value="">-- Kosongkan Section Ini --</option>
-                    <?php foreach ($availableSliders as $slider): ?>
-                        <option value="<?= htmlspecialchars($slider['id']) ?>"><?= htmlspecialchars($slider['name']) ?></option>
-                    <?php endforeach; ?>
-                </select>
+            <div class="setting-input" style="display: flex; align-items: center;">
+                <a href="/admin/panel/widgets" class="btn" style="padding: 0.6rem 1.25rem; background: var(--brand, #0f766e); color: #fff; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-th-large"></i> Buka Pengelola Widget
+                </a>
             </div>
         </div>
 

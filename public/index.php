@@ -41,7 +41,12 @@ function renderAdminPage(string $page, string $title): string
 function cachedPage(Application $app, int $ttl, callable $handler): callable
 {
     return function ($request, $response) use ($app, $ttl, $handler) {
-        if (isset($_GET['tp']) && $_GET['tp'] === '1') {
+        $cacheEnabled = filter_var($_ENV['CACHE_ENABLED'] ?? true, FILTER_VALIDATE_BOOLEAN);
+        $isAdmin = $app->auth->check();
+        $bypassParam = isset($_GET['tp']) && $_GET['tp'] === '1';
+
+        // Admin yang sedang mengelola CMS atau mode dev tidak boleh terkena cache usang
+        if (!$cacheEnabled || $isAdmin || $bypassParam) {
             return $handler($request, $response);
         }
 
