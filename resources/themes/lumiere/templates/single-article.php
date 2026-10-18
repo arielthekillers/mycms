@@ -313,11 +313,17 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
     }
     .article-header-bg {
         position: absolute;
-        inset: 0;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
         width: 100%;
+        max-width: 1100px;
         height: 100%;
         overflow: hidden;
         z-index: 1;
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%);
+        mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%);
     }
     .article-header-bg-img {
         width: 100%;
@@ -325,30 +331,27 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
         object-fit: cover;
         object-position: center;
         display: block;
-        transform: scale(1.03);
-        filter: brightness(0.85);
+        transform: scale(1.02);
+        filter: brightness(0.88);
     }
     .article-header-overlay {
         position: absolute;
         inset: 0;
         z-index: 2;
         background: 
-            /* Gradasi horizontal warna gelap dari kiri dan kanan */
-            linear-gradient(90deg, 
-                rgba(15, 23, 42, 0.96) 0%, 
-                rgba(15, 23, 42, 0.88) 18%, 
-                rgba(15, 23, 42, 0.60) 50%, 
-                rgba(15, 23, 42, 0.88) 82%, 
-                rgba(15, 23, 42, 0.96) 100%
-            ),
-            /* Gradasi vertikal lembut untuk kontras dan transisi ke konten */
+            /* Gradasi vertikal lembut untuk kontras teks judul */
             linear-gradient(180deg, 
                 rgba(15, 23, 42, 0.65) 0%, 
                 rgba(15, 23, 42, 0.25) 45%, 
-                rgba(15, 23, 42, 0.94) 100%
+                rgba(15, 23, 42, 0.92) 100%
+            ),
+            /* Gradasi horizontal di sisi gambar */
+            linear-gradient(90deg, 
+                rgba(15, 23, 42, 0.75) 0%, 
+                transparent 25%, 
+                transparent 75%, 
+                rgba(15, 23, 42, 0.75) 100%
             );
-        backdrop-filter: blur(0.5px);
-        -webkit-backdrop-filter: blur(0.5px);
     }
     .single-article-header-container {
         max-width: 920px;
