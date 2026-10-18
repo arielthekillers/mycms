@@ -3,5 +3,7 @@
     "name": "Manajer Slider",
     "description": "Kelola slideshow dinamis (Splide.js) untuk berbagai lokasi seperti beranda, widget, dan konten artikel.",
     "version": "1.0.0",
+    "author": "mycms team",
+    "author_url": "https://github.com/mycms",
     "admin_url": "/admin/panel/sliders"
 }
