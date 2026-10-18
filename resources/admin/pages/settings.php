@@ -68,9 +68,28 @@
 }
 .media-preview-box {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.65rem;
+}
+.btn-remove-media {
+    padding: 0.3rem 0.65rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.2s ease;
+}
+.btn-remove-media:hover {
+    background: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.25);
 }
 @media (max-width: 768px) {
     .setting-group {
@@ -120,8 +139,11 @@
                 <span>Gambar logo utama situs Anda. Akan teroptimasi secara otomatis ke format ringan (WebP).</span>
             </div>
             <div class="setting-input">
-                <div class="media-preview-box">
-                    <img id="logo-preview" src="" style="max-height: 50px; display: none; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; background: #fff;">
+                <div class="media-preview-box" id="logo-preview-box" style="display: none;">
+                    <img id="logo-preview" src="" style="max-height: 50px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; background: #fff;">
+                    <button type="button" class="btn-remove-media" id="btn-remove-logo" title="Hapus Logo">
+                        <i class="fas fa-trash-alt"></i> Hapus Logo
+                    </button>
                 </div>
                 <input type="file" id="setting-site-logo-file" accept="image/*">
                 <input type="hidden" id="setting-site-logo" name="site_logo">
@@ -134,8 +156,11 @@
                 <span>Gambar ikon kecil yang muncul di tab browser. Disarankan format PNG atau ICO dengan rasio persegi (1:1).</span>
             </div>
             <div class="setting-input">
-                <div class="media-preview-box">
-                    <img id="favicon-preview" src="" style="max-height: 32px; display: none; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; background: #fff;">
+                <div class="media-preview-box" id="favicon-preview-box" style="display: none;">
+                    <img id="favicon-preview" src="" style="max-height: 32px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; background: #fff;">
+                    <button type="button" class="btn-remove-media" id="btn-remove-favicon" title="Hapus Favicon">
+                        <i class="fas fa-trash-alt"></i> Hapus Favicon
+                    </button>
                 </div>
                 <input type="file" id="setting-site-favicon-file" accept="image/png, image/x-icon, image/jpeg, image/webp">
                 <input type="hidden" id="setting-site-favicon" name="site_favicon">

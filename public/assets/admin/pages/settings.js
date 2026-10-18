@@ -1,27 +1,54 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('settings-form');
 
-    // Previews
+    // Previews & Controls
     const logoPreview = document.getElementById('logo-preview');
     const faviconPreview = document.getElementById('favicon-preview');
+    const logoPreviewBox = document.getElementById('logo-preview-box');
+    const faviconPreviewBox = document.getElementById('favicon-preview-box');
+    const btnRemoveLogo = document.getElementById('btn-remove-logo');
+    const btnRemoveFavicon = document.getElementById('btn-remove-favicon');
+    const siteLogoInput = document.getElementById('setting-site-logo');
+    const siteFaviconInput = document.getElementById('setting-site-favicon');
+    const siteLogoFileInput = document.getElementById('setting-site-logo-file');
+    const siteFaviconFileInput = document.getElementById('setting-site-favicon-file');
 
-    function updatePreview(inputElement, previewElement) {
+    function updatePreview(inputElement, previewElement, previewBox) {
         inputElement.addEventListener('change', () => {
             if (inputElement.files && inputElement.files[0]) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     previewElement.src = e.target.result;
-                    previewElement.style.display = 'block';
+                    if (previewBox) previewBox.style.display = 'flex';
                 };
                 reader.readAsDataURL(inputElement.files[0]);
-            } else {
-                previewElement.style.display = 'none';
             }
         });
     }
 
-    updatePreview(document.getElementById('setting-site-logo-file'), logoPreview);
-    updatePreview(document.getElementById('setting-site-favicon-file'), faviconPreview);
+    updatePreview(siteLogoFileInput, logoPreview, logoPreviewBox);
+    updatePreview(siteFaviconFileInput, faviconPreview, faviconPreviewBox);
+
+    // Remove buttons handler
+    if (btnRemoveLogo) {
+        btnRemoveLogo.addEventListener('click', () => {
+            siteLogoInput.value = '';
+            siteLogoFileInput.value = '';
+            logoPreview.src = '';
+            if (logoPreviewBox) logoPreviewBox.style.display = 'none';
+            window.Admin.alert('Logo dihapus. Klik "Simpan Pengaturan" untuk menerapkan.', false);
+        });
+    }
+
+    if (btnRemoveFavicon) {
+        btnRemoveFavicon.addEventListener('click', () => {
+            siteFaviconInput.value = '';
+            siteFaviconFileInput.value = '';
+            faviconPreview.src = '';
+            if (faviconPreviewBox) faviconPreviewBox.style.display = 'none';
+            window.Admin.alert('Favicon dihapus. Klik "Simpan Pengaturan" untuk menerapkan.', false);
+        });
+    }
 
     // Load existing settings
     window.Admin.request('GET', '/admin/api/settings')
@@ -37,15 +64,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (settings.date_format) document.getElementById('setting-date-format').value = settings.date_format;
                 if (settings.time_format) document.getElementById('setting-time-format').value = settings.time_format;
                 
-                if (settings.site_logo) {
-                    document.getElementById('setting-site-logo').value = settings.site_logo;
+                if (settings.site_logo && settings.site_logo.trim() !== '') {
+                    siteLogoInput.value = settings.site_logo;
                     logoPreview.src = settings.site_logo;
-                    logoPreview.style.display = 'block';
+                    if (logoPreviewBox) logoPreviewBox.style.display = 'flex';
+                } else {
+                    siteLogoInput.value = '';
+                    if (logoPreviewBox) logoPreviewBox.style.display = 'none';
                 }
-                if (settings.site_favicon) {
-                    document.getElementById('setting-site-favicon').value = settings.site_favicon;
+
+                if (settings.site_favicon && settings.site_favicon.trim() !== '') {
+                    siteFaviconInput.value = settings.site_favicon;
                     faviconPreview.src = settings.site_favicon;
-                    faviconPreview.style.display = 'block';
+                    if (faviconPreviewBox) faviconPreviewBox.style.display = 'flex';
+                } else {
+                    siteFaviconInput.value = '';
+                    if (faviconPreviewBox) faviconPreviewBox.style.display = 'none';
                 }
             }
         })
