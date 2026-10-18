@@ -2,3 +2,7 @@
 !/scratch/.gitkeep
 /storage/cache/*
 !/storage/cache/.gitkeep
+/storage/uploads/*
+!/storage/uploads/.gitkeep
+/public/uploads/*
+!/public/uploads/.gitkeep
