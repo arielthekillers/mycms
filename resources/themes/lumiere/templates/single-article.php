@@ -58,8 +58,15 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
 ?>
 
 <div class="article-page-wrapper">
-    <!-- Header Hero / Meta Section -->
-    <header class="single-article-header">
+    <!-- Header Hero / Meta Section with Featured Image Background -->
+    <header class="single-article-header <?= $featuredImg ? 'has-featured-bg' : '' ?>">
+        <?php if ($featuredImg): ?>
+            <div class="article-header-bg" aria-hidden="true">
+                <img src="<?= htmlspecialchars($featuredImg) ?>" alt="<?= htmlspecialchars($article['title']) ?>" class="article-header-bg-img">
+                <div class="article-header-overlay"></div>
+            </div>
+        <?php endif; ?>
+
         <div class="single-article-header-container">
             <nav class="article-breadcrumb" aria-label="Breadcrumb">
                 <a href="/"><i class="fas fa-home"></i> Beranda</a>
@@ -112,12 +119,6 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
 
     <!-- Main Container -->
     <div class="single-article-container">
-        
-        <?php if ($featuredImg): ?>
-            <div class="featured-image-wrapper">
-                <img src="<?= htmlspecialchars($featuredImg) ?>" alt="<?= htmlspecialchars($article['title']) ?>" class="featured-image">
-            </div>
-        <?php endif; ?>
 
         <!-- Content Body -->
         <div class="article-main-layout">
@@ -293,23 +294,68 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
     .single-article-header {
         background: linear-gradient(135deg, var(--secondary-color, #0f172a) 0%, #1e293b 100%);
         color: white;
-        padding: 5rem 5% 6rem;
+        padding: 5.5rem 5% 5rem;
         position: relative;
         text-align: center;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+        min-height: 380px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-    .single-article-header::before {
+    .single-article-header:not(.has-featured-bg)::before {
         content: '';
         position: absolute;
         inset: 0;
         background: radial-gradient(circle at 50% 10%, rgba(27, 178, 166, 0.25) 0%, transparent 75%);
         pointer-events: none;
     }
+    .article-header-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 1;
+    }
+    .article-header-bg-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+        transform: scale(1.03);
+        filter: brightness(0.85);
+    }
+    .article-header-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        background: 
+            /* Gradasi horizontal warna gelap dari kiri dan kanan */
+            linear-gradient(90deg, 
+                rgba(15, 23, 42, 0.96) 0%, 
+                rgba(15, 23, 42, 0.88) 18%, 
+                rgba(15, 23, 42, 0.60) 50%, 
+                rgba(15, 23, 42, 0.88) 82%, 
+                rgba(15, 23, 42, 0.96) 100%
+            ),
+            /* Gradasi vertikal lembut untuk kontras dan transisi ke konten */
+            linear-gradient(180deg, 
+                rgba(15, 23, 42, 0.65) 0%, 
+                rgba(15, 23, 42, 0.25) 45%, 
+                rgba(15, 23, 42, 0.94) 100%
+            );
+        backdrop-filter: blur(0.5px);
+        -webkit-backdrop-filter: blur(0.5px);
+    }
     .single-article-header-container {
-        max-width: 900px;
+        max-width: 920px;
         margin: 0 auto;
         position: relative;
-        z-index: 2;
+        z-index: 3;
+        width: 100%;
     }
     .article-breadcrumb {
         font-size: 0.88rem;
@@ -415,23 +461,10 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
     /* Container & Layout */
     .single-article-container {
         max-width: 1100px;
-        margin: -3.5rem auto 0;
+        margin: 2.75rem auto 0;
         padding: 0 5%;
         position: relative;
         z-index: 5;
-    }
-    .featured-image-wrapper {
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 16px 45px rgba(0,0,0,0.15);
-        margin-bottom: 3.5rem;
-        border: 1px solid rgba(255, 255, 255, 0.8);
-    }
-    .featured-image {
-        width: 100%;
-        max-height: 520px;
-        object-fit: cover;
-        display: block;
     }
     .article-main-layout {
         display: grid;
@@ -922,8 +955,8 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
     }
     @media (max-width: 640px) {
         .single-article-title { font-size: 1.85rem; }
-        .single-article-header { padding: 3.5rem 5% 4.5rem; }
-        .single-article-container { margin-top: -2.5rem; padding: 0 4%; }
+        .single-article-header { padding: 3.5rem 1.25rem 3.5rem; min-height: 320px; }
+        .single-article-container { margin-top: 1.75rem; padding: 0 4%; }
         .article-body-wrapper { padding: 2rem 1.25rem; }
         .form-grid { grid-template-columns: 1fr; }
         .author-bio-card { flex-direction: column; text-align: center; }
