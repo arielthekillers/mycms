@@ -28,24 +28,171 @@ body {
     flex-shrink: 0;
     background: #0f172a;
     color: #e2e8f0;
-    padding: 1.5rem 0;
+    padding: 1.25rem 0 2.5rem;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 100;
+    overflow-y: auto;
+    max-height: 100vh;
+    position: sticky;
+    top: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
 }
 
-.admin-brand { font-weight: 700; font-size: 1.1rem; padding: 0 1.25rem 1.5rem; }
+.admin-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+.admin-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
 
-#admin-nav { display: flex; flex-direction: column; }
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.25rem 1.25rem 1.35rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 0.5rem;
+}
+.brand-logo-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+    flex-shrink: 0;
+}
+.brand-text-wrap {
+    display: flex;
+    flex-direction: column;
+}
+.brand-title {
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+.brand-tag {
+    font-size: 0.68rem;
+    color: #94a3b8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 2px;
+}
+
+#admin-nav {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-section-title {
+    font-size: 0.66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    padding: 0.8rem 1.25rem 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    margin: 0.45rem 1rem;
+}
+
+.nav-divider-highlight {
+    background: linear-gradient(90deg, rgba(20, 184, 166, 0.45) 0%, rgba(255, 255, 255, 0.06) 100%);
+    margin: 0.65rem 1rem;
+}
+
+.nav-badge-pill {
+    background: rgba(20, 184, 166, 0.18);
+    color: #2dd4bf;
+    font-size: 0.62rem;
+    padding: 0.12rem 0.48rem;
+    border-radius: 20px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: 1px solid rgba(20, 184, 166, 0.32);
+}
 
 #admin-nav a {
-    color: #cbd5e1;
+    color: #94a3b8;
     text-decoration: none;
-    padding: .85rem 1.25rem;
-    font-size: .95rem;
-    transition: background 0.2s;
+    padding: 0.62rem 0.95rem;
+    margin: 1.5px 0.75rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border-left: 3px solid transparent;
 }
 
-#admin-nav a:hover, #admin-nav a.active { background: #1e293b; color: #fff; border-left: 3px solid var(--admin-primary); }
+#admin-nav a .nav-icon {
+    width: 20px;
+    font-size: 0.92rem;
+    text-align: center;
+    color: #64748b;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+#admin-nav a:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #f8fafc;
+    transform: translateX(3px);
+}
+
+#admin-nav a:hover .nav-icon {
+    color: #2dd4bf;
+}
+
+#admin-nav a.active {
+    background: linear-gradient(90deg, rgba(20, 184, 166, 0.22) 0%, rgba(20, 184, 166, 0.04) 100%);
+    color: #ffffff;
+    font-weight: 600;
+    border-left: 3px solid #14b8a6;
+}
+
+#admin-nav a.active .nav-icon {
+    color: #2dd4bf;
+}
+
+/* Submenu Plugin Item */
+.nav-plugin-submenu {
+    display: flex;
+    flex-direction: column;
+    margin-left: 0.75rem;
+    padding-left: 0.5rem;
+    border-left: 1px dashed rgba(255, 255, 255, 0.12);
+    margin-top: 2px;
+    margin-bottom: 4px;
+}
+
+.nav-plugin-submenu a {
+    font-size: 0.84rem !important;
+    padding: 0.52rem 0.85rem !important;
+    margin: 1px 0.45rem !important;
+}
+
+.nav-plugin-submenu a .nav-icon {
+    font-size: 0.82rem !important;
+    width: 18px !important;
+}
 
 .mobile-menu-toggle { display: none; }
 .sidebar-overlay { 

@@ -57,6 +57,7 @@ final class PluginManager
                         'author' => !empty($info['author']) ? $info['author'] : 'mycms team',
                         'author_url' => $info['author_url'] ?? null,
                         'admin_url' => $info['admin_url'] ?? null,
+                        'icon' => $info['icon'] ?? 'fas fa-puzzle-piece',
                         'is_active' => $activeMap[$dirName] ?? false,
                     ];
                 }

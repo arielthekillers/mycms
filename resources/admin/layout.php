@@ -5,35 +5,123 @@
     <title><?= htmlspecialchars($title ?? 'Admin') ?> — Pesantren CMS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="<?= htmlspecialchars(\App\Core\Auth\Session::csrfToken()) ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/assets/admin/admin.css">
 </head>
 <body>
+    <?php
+    $appInstance = \App\Core\Application::getInstance();
+    $activePlugins = [];
+    try {
+        $discovered = $appInstance->plugins->discover();
+        foreach ($discovered as $p) {
+            if (!empty($p['is_active']) && !empty($p['admin_url'])) {
+                $activePlugins[] = $p;
+            }
+        }
+    } catch (\Throwable $e) {
+        // Fallback
+    }
+    ?>
     <div class="admin-shell">
         <aside class="admin-sidebar">
-            <div class="admin-brand">Pesantren CMS</div>
+            <div class="admin-brand">
+                <div class="brand-logo-icon">
+                    <i class="fas fa-mosque"></i>
+                </div>
+                <div class="brand-text-wrap">
+                    <span class="brand-title">Pesantren CMS</span>
+                    <span class="brand-tag">Administrator</span>
+                </div>
+            </div>
             <nav id="admin-nav">
-                <a href="/admin/panel" data-page="dashboard">Dashboard</a>
-                <a href="/admin/panel/statistics" data-page="statistics">Statistik</a>
+                <!-- Group 1: UTAMA -->
+                <div class="nav-section-title">UTAMA</div>
+                <a href="/admin/panel" data-page="dashboard">
+                    <i class="nav-icon fas fa-gauge-high"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/panel/statistics" data-page="statistics">
+                    <i class="nav-icon fas fa-chart-line"></i>
+                    <span>Statistik</span>
+                </a>
                 
-                <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 0.5rem 1rem;"></div>
+                <div class="nav-divider"></div>
                 
-                <a href="/admin/panel/articles" data-page="articles" data-permission="articles.view">Artikel</a>
-                <a href="/admin/panel/media" data-page="media" data-permission="media.view">Media</a>
-                <a href="/admin/panel/pages" data-page="pages" data-permission="pages.view">Halaman</a>
-                <a href="/admin/panel/comments" data-page="comments">Komentar</a>
+                <!-- Group 2: KONTEN -->
+                <div class="nav-section-title">KONTEN</div>
+                <a href="/admin/panel/articles" data-page="articles" data-permission="articles.view">
+                    <i class="nav-icon fas fa-newspaper"></i>
+                    <span>Artikel</span>
+                </a>
+                <a href="/admin/panel/pages" data-page="pages" data-permission="pages.view">
+                    <i class="nav-icon fas fa-file-lines"></i>
+                    <span>Halaman</span>
+                </a>
+                <a href="/admin/panel/media" data-page="media" data-permission="media.view">
+                    <i class="nav-icon fas fa-images"></i>
+                    <span>Media</span>
+                </a>
+                <a href="/admin/panel/comments" data-page="comments">
+                    <i class="nav-icon fas fa-comments"></i>
+                    <span>Komentar</span>
+                </a>
                 
-                <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 0.5rem 1rem;"></div>
+                <div class="nav-divider"></div>
                 
-                <a href="/admin/panel/themes" data-page="themes" data-permission="theme.manage">Tema</a>
-                <a href="/admin/panel/widgets" data-page="widgets" data-permission="theme.manage">Widget</a>
-                <a href="/admin/panel/menus" data-page="menus" data-permission="menus.manage">Menu</a>
-                <a href="/admin/panel/sliders" data-page="sliders">Slider</a>
+                <!-- Group 3: TAMPILAN -->
+                <div class="nav-section-title">TAMPILAN</div>
+                <a href="/admin/panel/themes" data-page="themes" data-permission="theme.manage">
+                    <i class="nav-icon fas fa-palette"></i>
+                    <span>Tema</span>
+                </a>
+                <a href="/admin/panel/menus" data-page="menus" data-permission="menus.manage">
+                    <i class="nav-icon fas fa-bars-staggered"></i>
+                    <span>Menu</span>
+                </a>
+                <a href="/admin/panel/widgets" data-page="widgets" data-permission="theme.manage">
+                    <i class="nav-icon fas fa-cubes"></i>
+                    <span>Widget</span>
+                </a>
                 
-                <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 0.5rem 1rem;"></div>
+                <!-- Group 4: BLOK KHUSUS PLUGIN -->
+                <div class="nav-divider nav-divider-highlight"></div>
                 
-                <a href="/admin/panel/users" data-page="users" data-permission="users.manage">Pengguna</a>
-                <a href="/admin/panel/plugins" data-page="plugins">Sistem Plugin</a>
-                <a href="/admin/panel/settings" data-page="settings" data-permission="settings.manage">Pengaturan</a>
+                <div class="nav-section-title nav-plugin-header">
+                    <span>PLUGIN</span>
+                    <?php if (!empty($activePlugins)): ?>
+                        <span class="nav-badge-pill"><?= count($activePlugins) ?> Aktif</span>
+                    <?php endif; ?>
+                </div>
+                
+                <a href="/admin/panel/plugins" data-page="plugins">
+                    <i class="nav-icon fas fa-puzzle-piece"></i>
+                    <span>Sistem Plugin</span>
+                </a>
+                
+                <?php if (!empty($activePlugins)): ?>
+                    <div class="nav-plugin-submenu">
+                        <?php foreach ($activePlugins as $plugin): ?>
+                            <a href="<?= htmlspecialchars($plugin['admin_url']) ?>" class="nav-plugin-link" data-page="<?= htmlspecialchars(basename($plugin['admin_url'])) ?>">
+                                <i class="nav-icon <?= htmlspecialchars($plugin['icon'] ?? 'fas fa-puzzle-piece') ?>"></i>
+                                <span><?= htmlspecialchars($plugin['name']) ?></span>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+                
+                <div class="nav-divider nav-divider-highlight"></div>
+                
+                <!-- Group 5: SISTEM -->
+                <div class="nav-section-title">SISTEM</div>
+                <a href="/admin/panel/users" data-page="users" data-permission="users.manage">
+                    <i class="nav-icon fas fa-users-gear"></i>
+                    <span>Pengguna</span>
+                </a>
+                <a href="/admin/panel/settings" data-page="settings" data-permission="settings.manage">
+                    <i class="nav-icon fas fa-gear"></i>
+                    <span>Pengaturan</span>
+                </a>
             </nav>
         </aside>
 
