@@ -31,22 +31,22 @@
         },
         {
             "key": "footer_1",
-            "label": "Footer Kiri (Lumière)",
+            "label": "Footer Kiri",
             "scope": "global"
         },
         {
             "key": "footer_2",
-            "label": "Footer Tengah (Lumière)",
+            "label": "Footer Tengah",
             "scope": "global"
         },
         {
             "key": "footer_3",
-            "label": "Footer Kanan (Lumière)",
+            "label": "Footer Kanan",
             "scope": "global"
         },
         {
             "key": "footer_bottom",
-            "label": "Footer Bawah (Copyright)",
+            "label": "Footer Bawah",
             "scope": "global"
         }
     ]

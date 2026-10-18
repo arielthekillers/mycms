@@ -86,13 +86,25 @@ final class WidgetManager
                     $supportedKeys
                 );
 
-                // Preserve exact ordering defined by the theme
+                // Preserve exact ordering defined by the theme and ensure label matches theme definition
                 $keyOrder = array_flip($supportedKeys);
+                $themeAreaMap = [];
+                foreach ($themeAreas as $ta) {
+                    $themeAreaMap[$ta['key_name']] = $ta;
+                }
+
                 usort($rows, function ($a, $b) use ($keyOrder) {
                     $orderA = $keyOrder[$a['key_name']] ?? 999;
                     $orderB = $keyOrder[$b['key_name']] ?? 999;
                     return $orderA <=> $orderB;
                 });
+
+                foreach ($rows as &$row) {
+                    if (!empty($themeAreaMap[$row['key_name']]['label'])) {
+                        $row['label'] = $themeAreaMap[$row['key_name']]['label'];
+                    }
+                }
+                unset($row);
 
                 return $rows;
             }

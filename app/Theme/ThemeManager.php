@@ -130,11 +130,14 @@ final class ThemeManager
         $areas = $this->getThemeWidgetAreas($themeKey);
         foreach ($areas as $area) {
             $this->db->execute(
-                "INSERT IGNORE INTO widget_areas (key_name, label, scope) VALUES (:k, :l, :s)",
+                "INSERT INTO widget_areas (key_name, label, scope) VALUES (:k, :l, :s)
+                 ON DUPLICATE KEY UPDATE label = :l2, scope = :s2",
                 [
                     'k' => $area['key_name'],
                     'l' => $area['label'],
                     's' => $area['scope'] ?? 'global',
+                    'l2' => $area['label'],
+                    's2' => $area['scope'] ?? 'global',
                 ]
             );
         }

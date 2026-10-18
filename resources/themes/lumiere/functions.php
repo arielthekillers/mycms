@@ -10,19 +10,19 @@ $app->events->listen('menu.register', function ($menus) {
 // Registrasi 3 Area Footer secara otomatis
 try {
     $areas = [
-        'footer_1' => 'Footer Kiri (Lumière)',
-        'footer_2' => 'Footer Tengah (Lumière)',
-        'footer_3' => 'Footer Kanan (Lumière)',
+        'footer_1' => 'Footer Kiri',
+        'footer_2' => 'Footer Tengah',
+        'footer_3' => 'Footer Kanan',
         'homepage_hero' => 'Beranda - Hero Section',
         'homepage_tentang' => 'Beranda - Tentang',
         'homepage_profil' => 'Beranda - Profil Singkat',
         'homepage_berita' => 'Beranda - Berita Terkini',
-        'footer_bottom' => 'Footer Bawah (Copyright)'
+        'footer_bottom' => 'Footer Bawah'
     ];
     foreach ($areas as $key => $label) {
         $app->db->execute(
-            "INSERT IGNORE INTO widget_areas (key_name, label, scope) VALUES (:k, :l, 'global')",
-            ['k' => $key, 'l' => $label]
+            "INSERT INTO widget_areas (key_name, label, scope) VALUES (:k, :l, 'global') ON DUPLICATE KEY UPDATE label = :l2",
+            ['k' => $key, 'l' => $label, 'l2' => $label]
         );
     }
 } catch (\Exception $e) {
