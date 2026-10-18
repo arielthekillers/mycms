@@ -185,14 +185,10 @@ function render_slider($sliderId, array $options = []) {
             break;
     }
 
-    // Load CSS/JS only once
-    static $splideLoaded = false;
-    $assets = '';
-    if (!$splideLoaded) {
-        $assets .= '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">';
-        $assets .= '<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>';
-        $splideLoaded = true;
-    }
+    // Ensure CSS/JS are included with each rendered slider instance
+    $assets = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">'
+            . '<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>';
+
     
     // Configuration values
     $isAutoplay = isset($data['autoplay']) ? (bool)$data['autoplay'] : true;
@@ -625,58 +621,91 @@ function render_slider($sliderId, array $options = []) {
     // Script Init
     $html .= "<script>
         (function() {
-            var attempts = 0;
-            function initSplide_{$cleanInstanceId}() {
-                var el = document.querySelector('#{$instanceDomId}');
-                if (!el) return;
-                if (typeof Splide === 'undefined') {
-                    if (attempts++ < 60) {
-                        setTimeout(initSplide_{$cleanInstanceId}, 50);
-                    }
+            function loadSplideAssets(callback) {
+                if (typeof Splide !== 'undefined') {
+                    callback();
                     return;
                 }
-                try {
-                    var splideOpts = {
-                        type: '{$splideType}',
-                        direction: '{$direction}',
-                        rewind: true,
-                        autoplay: {$autoplayVal},
-                        interval: {$interval},
-                        pauseOnHover: {$pauseOnHover},
-                        pauseOnFocus: false,
-                        resetProgress: false,
-                        arrows: true,
-                        pagination: true,
-                        speed: {$speed},
-                        easing: '{$easingCurve}'
-                    };
-
-                    if ('{$direction}' === 'ttb') {
-                        var targetH = el.offsetHeight || el.clientHeight;
-                        splideOpts.height = (targetH && targetH > 80) ? (targetH + 'px') : '{$containerHeight}';
-                        splideOpts.autoHeight = false;
-                    }
-
-                    var splideInstance = new Splide(el, splideOpts);
-                    splideInstance.mount();
-
-                    if ('{$direction}' === 'ttb') {
-                        window.addEventListener('resize', function() {
-                            var newH = el.offsetHeight;
-                            if (newH > 80 && splideInstance.options) {
-                                splideInstance.options = { height: newH + 'px' };
+                if (!document.querySelector('link[href*=\"splide.min.css\"]')) {
+                    var link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = 'https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css';
+                    document.head.appendChild(link);
+                }
+                var existingScript = document.querySelector('script[src*=\"splide.min.js\"]');
+                if (existingScript) {
+                    if (typeof Splide !== 'undefined') {
+                        callback();
+                    } else {
+                        existingScript.addEventListener('load', callback);
+                        var poll = setInterval(function() {
+                            if (typeof Splide !== 'undefined') {
+                                clearInterval(poll);
+                                callback();
                             }
-                        });
+                        }, 50);
                     }
-                    " . ($isAutoplay ? "
-                    if (splideInstance.Components && splideInstance.Components.Autoplay) {
-                        splideInstance.Components.Autoplay.play();
-                    }
-                    " : "") . "
-                } catch(err) {
-                    console.warn('[PluginSlider] Init error:', err);
+                } else {
+                    var script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js';
+                    script.onload = callback;
+                    document.head.appendChild(script);
                 }
             }
+
+            function initSplide_{$cleanInstanceId}() {
+                var el = document.querySelector('#{$instanceDomId}');
+                if (!el || el.classList.contains('is-initialized')) return;
+
+                loadSplideAssets(function() {
+                    try {
+                        if (typeof Splide === 'undefined') return;
+                        if (el.classList.contains('is-initialized')) return;
+
+                        var splideOpts = {
+                            type: '{$splideType}',
+                            direction: '{$direction}',
+                            rewind: true,
+                            autoplay: {$autoplayVal},
+                            interval: {$interval},
+                            pauseOnHover: {$pauseOnHover},
+                            pauseOnFocus: false,
+                            resetProgress: false,
+                            arrows: true,
+                            pagination: true,
+                            speed: {$speed},
+                            easing: '{$easingCurve}'
+                        };
+
+                        if ('{$direction}' === 'ttb') {
+                            var targetH = el.offsetHeight || el.clientHeight;
+                            splideOpts.height = (targetH && targetH > 80) ? (targetH + 'px') : '{$containerHeight}';
+                            splideOpts.autoHeight = false;
+                        }
+
+                        var splideInstance = new Splide(el, splideOpts);
+                        splideInstance.mount();
+                        el.classList.add('is-initialized');
+
+                        if ('{$direction}' === 'ttb') {
+                            window.addEventListener('resize', function() {
+                                var newH = el.offsetHeight;
+                                if (newH > 80 && splideInstance.options) {
+                                    splideInstance.options = { height: newH + 'px' };
+                                }
+                            });
+                        }
+                        " . ($isAutoplay ? "
+                        if (splideInstance.Components && splideInstance.Components.Autoplay) {
+                            splideInstance.Components.Autoplay.play();
+                        }
+                        " : "") . "
+                    } catch(err) {
+                        console.warn('[PluginSlider] Init error:', err);
+                    }
+                });
+            }
+
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initSplide_{$cleanInstanceId});
             } else {
