@@ -1,7 +1,7 @@
 <div class="toolbar-modern">
     <div>
         <h2 style="margin: 0; font-size: 1.25rem; font-weight: 600;">Pengelola Widget</h2>
-        <p style="margin: 0.25rem 0 0 0; color: var(--admin-muted); font-size: 0.9rem;">Kelola blok konten pada area yang didukung oleh tema Anda.</p>
+        <p style="margin: 0.25rem 0 0 0; color: var(--admin-muted); font-size: 0.9rem;">Kelola blok konten pada area yang didukung oleh tema aktif.</p>
     </div>
 </div>
 
@@ -10,7 +10,10 @@
     <!-- Sidebar Area List -->
     <div class="widget-sidebar" style="flex: 0 0 280px; width: 100%;">
         <div class="admin-card" style="padding: 1rem;">
-            <h3 style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--admin-muted); margin: 0 0 1rem 0;">Area Widget</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin: 0 0 1rem 0; gap: 8px;">
+                <h3 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--admin-muted); margin: 0;">Area Widget</h3>
+                <span id="active-theme-badge" style="display: none; font-size: 0.75rem; padding: 2px 8px; border-radius: 9999px; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; font-weight: 600;"></span>
+            </div>
             <div id="widget-area-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
                 <div style="padding: 1rem; text-align: center; color: var(--admin-muted);">Memuat area...</div>
             </div>

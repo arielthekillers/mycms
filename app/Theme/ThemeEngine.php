@@ -208,7 +208,40 @@ final class ThemeEngine
     /** @return array<string, string> area key_name => rendered widgets HTML, for header/footer regardless of layout */
     private function renderGlobalWidgetAreas(): array
     {
-        $rows = $this->db->select("SELECT key_name FROM widget_areas WHERE scope = 'global'");
+        $jsonPath = $this->themesBasePath . '/' . $this->activeTheme . '/theme.json';
+        $themeGlobalKeys = null;
+
+        if (file_exists($jsonPath)) {
+            $meta = json_decode(file_get_contents($jsonPath), true) ?? [];
+            if (!empty($meta['widget_areas']) && is_array($meta['widget_areas'])) {
+                $themeGlobalKeys = [];
+                foreach ($meta['widget_areas'] as $item) {
+                    if (is_array($item)) {
+                        $scope = $item['scope'] ?? 'global';
+                        $key = $item['key_name'] ?? $item['key'] ?? null;
+                        if ($key && $scope === 'global') {
+                            $themeGlobalKeys[] = $key;
+                        }
+                    } elseif (is_string($item)) {
+                        $themeGlobalKeys[] = $item;
+                    }
+                }
+            }
+        }
+
+        if ($themeGlobalKeys !== null) {
+            if (empty($themeGlobalKeys)) {
+                return [];
+            }
+            $inClause = implode(',', array_fill(0, count($themeGlobalKeys), '?'));
+            $rows = $this->db->select(
+                "SELECT key_name FROM widget_areas WHERE scope = 'global' AND key_name IN ($inClause)",
+                $themeGlobalKeys
+            );
+        } else {
+            $rows = $this->db->select("SELECT key_name FROM widget_areas WHERE scope = 'global'");
+        }
+
         $areas = [];
 
         foreach ($rows as $row) {

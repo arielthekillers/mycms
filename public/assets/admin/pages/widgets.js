@@ -22,9 +22,15 @@
         try {
             const res = await Admin.request('GET', '/admin/widget-areas');
             const areas = res.data;
+
+            const themeBadge = document.getElementById('active-theme-badge');
+            if (themeBadge && res.theme) {
+                themeBadge.textContent = res.theme.name || res.theme.key;
+                themeBadge.style.display = 'inline-block';
+            }
             
-            if (areas.length === 0) {
-                areaListContainer.innerHTML = '<div style="padding: 1rem; text-align: center; color: var(--admin-muted);">Belum ada area.</div>';
+            if (!areas || areas.length === 0) {
+                areaListContainer.innerHTML = '<div style="padding: 1rem; text-align: center; color: var(--admin-muted);">Belum ada area widget pada tema aktif.</div>';
                 return;
             }
 

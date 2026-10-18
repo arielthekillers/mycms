@@ -10,8 +10,41 @@ use RuntimeException;
 
 final class WidgetManager
 {
-    public function __construct(private Database $db, private ?CacheInterface $cache = null)
+    public function __construct(
+        private Database $db,
+        private ?CacheInterface $cache = null,
+        private ?ThemeManager $themeManager = null
+    ) {
+        if ($this->themeManager === null && class_exists(\App\Core\Application::class)) {
+            try {
+                $this->themeManager = \App\Core\Application::getInstance()->themeManager();
+            } catch (\Throwable $e) {
+            }
+        }
+    }
+
+    public function getActiveThemeMeta(?string $themeKey = null): array
     {
+        $themeKey = $themeKey ?: $this->resolveActiveThemeKey();
+        if ($this->themeManager !== null) {
+            return $this->themeManager->getThemeMeta($themeKey);
+        }
+
+        return ['key' => $themeKey, 'name' => ucfirst($themeKey)];
+    }
+
+    private function resolveActiveThemeKey(): string
+    {
+        if ($this->themeManager !== null) {
+            return $this->themeManager->getActiveThemeKey();
+        }
+
+        try {
+            $active = $this->db->selectOne("SELECT key_name FROM themes WHERE is_active = 1 LIMIT 1");
+            return $active['key_name'] ?? 'pesantren-default';
+        } catch (\Throwable $e) {
+            return 'pesantren-default';
+        }
     }
 
     public function listWidgetTypes(): array
@@ -28,8 +61,43 @@ final class WidgetManager
         return $types;
     }
 
-    public function listWidgetAreas(): array
+    public function listWidgetAreas(?string $themeKey = null): array
     {
+        $themeKey = $themeKey ?: $this->resolveActiveThemeKey();
+
+        $themeManager = $this->themeManager;
+        if ($themeManager === null && class_exists(\App\Core\Application::class)) {
+            try {
+                $themeManager = \App\Core\Application::getInstance()->themeManager();
+            } catch (\Throwable $e) {
+            }
+        }
+
+        if ($themeManager !== null) {
+            $themeManager->syncThemeWidgetAreas($themeKey);
+            $themeAreas = $themeManager->getThemeWidgetAreas($themeKey);
+
+            if (!empty($themeAreas)) {
+                $supportedKeys = array_column($themeAreas, 'key_name');
+                $inClause = implode(',', array_fill(0, count($supportedKeys), '?'));
+
+                $rows = $this->db->select(
+                    "SELECT * FROM widget_areas WHERE key_name IN ($inClause)",
+                    $supportedKeys
+                );
+
+                // Preserve exact ordering defined by the theme
+                $keyOrder = array_flip($supportedKeys);
+                usort($rows, function ($a, $b) use ($keyOrder) {
+                    $orderA = $keyOrder[$a['key_name']] ?? 999;
+                    $orderB = $keyOrder[$b['key_name']] ?? 999;
+                    return $orderA <=> $orderB;
+                });
+
+                return $rows;
+            }
+        }
+
         return $this->db->select('SELECT * FROM widget_areas ORDER BY scope ASC, label ASC');
     }
 

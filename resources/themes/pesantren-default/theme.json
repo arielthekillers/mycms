@@ -2,5 +2,23 @@
     "name": "Pesantren Default",
     "description": "Tema bawaan resmi dari Pesantren CMS dengan desain Islami yang bersih dan responsif.",
     "version": "1.0.0",
-    "author": "Pesantren CMS"
+    "author": "Pesantren CMS",
+    "widget_areas": [
+        {
+            "key": "header-top",
+            "label": "Header",
+            "scope": "global"
+        },
+        {
+            "key": "sidebar-main",
+            "label": "Sidebar",
+            "scope": "layout"
+        },
+        {
+            "key": "footer",
+            "label": "Footer",
+            "scope": "global"
+        }
+    ]
 }
+

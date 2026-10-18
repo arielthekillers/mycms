@@ -16,7 +16,8 @@ try {
         'homepage_hero' => 'Beranda - Hero Section',
         'homepage_tentang' => 'Beranda - Tentang',
         'homepage_profil' => 'Beranda - Profil Singkat',
-        'homepage_berita' => 'Beranda - Berita Terkini'
+        'homepage_berita' => 'Beranda - Berita Terkini',
+        'footer_bottom' => 'Footer Bawah (Copyright)'
     ];
     foreach ($areas as $key => $label) {
         $app->db->execute(

@@ -153,7 +153,7 @@ final class Application
 
     public function widgets(): WidgetManager
     {
-        return new WidgetManager($this->db, $this->cache);
+        return new WidgetManager($this->db, $this->cache, $this->themeManager());
     }
 
     public function activeThemeKey(): string

@@ -22,7 +22,14 @@ final class WidgetController
 
     public function areas(Request $request, Response $response): Response
     {
-        return $response->json(['data' => $this->widgets->listWidgetAreas()]);
+        $theme = (string) $request->query('theme', '');
+        $areas = $this->widgets->listWidgetAreas($theme ?: null);
+        $themeMeta = $this->widgets->getActiveThemeMeta($theme ?: null);
+
+        return $response->json([
+            'data' => $areas,
+            'theme' => $themeMeta,
+        ]);
     }
 
     public function instances(Request $request, Response $response): Response

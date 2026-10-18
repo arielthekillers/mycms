@@ -2,5 +2,53 @@
     "name": "Lumière",
     "description": "Tema premium yang sangat elegan dengan tipografi modern, gradasi lembut, dan animasi mikro interaktif.",
     "version": "1.0.0",
-    "author": "Antigravity"
+    "author": "Antigravity",
+    "widget_areas": [
+        {
+            "key": "homepage_hero",
+            "label": "Beranda - Hero Section",
+            "scope": "global"
+        },
+        {
+            "key": "homepage_tentang",
+            "label": "Beranda - Tentang",
+            "scope": "global"
+        },
+        {
+            "key": "homepage_profil",
+            "label": "Beranda - Profil Singkat",
+            "scope": "global"
+        },
+        {
+            "key": "homepage_berita",
+            "label": "Beranda - Berita Terkini",
+            "scope": "global"
+        },
+        {
+            "key": "sidebar-main",
+            "label": "Sidebar",
+            "scope": "layout"
+        },
+        {
+            "key": "footer_1",
+            "label": "Footer Kiri (Lumière)",
+            "scope": "global"
+        },
+        {
+            "key": "footer_2",
+            "label": "Footer Tengah (Lumière)",
+            "scope": "global"
+        },
+        {
+            "key": "footer_3",
+            "label": "Footer Kanan (Lumière)",
+            "scope": "global"
+        },
+        {
+            "key": "footer_bottom",
+            "label": "Footer Bawah (Copyright)",
+            "scope": "global"
+        }
+    ]
 }
+

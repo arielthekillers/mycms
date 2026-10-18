@@ -66,6 +66,80 @@ final class ThemeManager
         return $active['key_name'] ?? 'pesantren-default';
     }
 
+    public function getThemeMeta(string $themeKey): array
+    {
+        $path = $this->themesPath . '/' . $themeKey;
+        $jsonPath = $path . '/theme.json';
+        $meta = [];
+        if (file_exists($jsonPath)) {
+            $meta = json_decode(file_get_contents($jsonPath), true) ?? [];
+        }
+
+        return [
+            'key' => $themeKey,
+            'name' => $meta['name'] ?? ucfirst($themeKey),
+            'description' => $meta['description'] ?? '',
+            'version' => $meta['version'] ?? '1.0.0',
+            'author' => $meta['author'] ?? '',
+            'widget_areas' => $meta['widget_areas'] ?? [],
+        ];
+    }
+
+    /**
+     * @return array<array{key_name: string, label: string, scope: string}>
+     */
+    public function getThemeWidgetAreas(?string $themeKey = null): array
+    {
+        $themeKey = $themeKey ?: $this->getActiveThemeKey();
+        $meta = $this->getThemeMeta($themeKey);
+
+        $areas = [];
+        if (!empty($meta['widget_areas']) && is_array($meta['widget_areas'])) {
+            foreach ($meta['widget_areas'] as $item) {
+                if (is_string($item)) {
+                    $areas[] = [
+                        'key_name' => $item,
+                        'label' => ucwords(str_replace(['_', '-'], ' ', $item)),
+                        'scope' => 'global',
+                    ];
+                } elseif (is_array($item) && (!empty($item['key_name']) || !empty($item['key']))) {
+                    $key = (string) ($item['key_name'] ?? $item['key']);
+                    $areas[] = [
+                        'key_name' => $key,
+                        'label' => (string) ($item['label'] ?? ucwords(str_replace(['_', '-'], ' ', $key))),
+                        'scope' => (string) ($item['scope'] ?? 'global'),
+                    ];
+                }
+            }
+        }
+
+        // Allow plugins or theme functions to filter/extend registered widget areas
+        if (class_exists(\App\Core\Application::class)) {
+            try {
+                $areas = \App\Core\Application::getInstance()->events->filter('theme.widget_areas', $areas, $themeKey);
+            } catch (\Throwable $e) {
+                // Application not booted or singleton not ready
+            }
+        }
+
+        return $areas;
+    }
+
+    public function syncThemeWidgetAreas(?string $themeKey = null): void
+    {
+        $areas = $this->getThemeWidgetAreas($themeKey);
+        foreach ($areas as $area) {
+            $this->db->execute(
+                "INSERT IGNORE INTO widget_areas (key_name, label, scope) VALUES (:k, :l, :s)",
+                [
+                    'k' => $area['key_name'],
+                    'l' => $area['label'],
+                    's' => $area['scope'] ?? 'global',
+                ]
+            );
+        }
+    }
+
     public function activate(string $directory): void
     {
         $path = $this->themesPath . '/' . $directory;
@@ -82,6 +156,8 @@ final class ThemeManager
         } else {
             $this->db->execute("INSERT INTO themes (key_name, is_active) VALUES (:k, 1)", ['k' => $directory]);
         }
+
+        $this->syncThemeWidgetAreas($directory);
     }
 
     public function extractZip(string $zipPath): string
