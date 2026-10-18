@@ -176,10 +176,55 @@
                 <span><?= htmlspecialchars($site['site_name'] ?? 'Pondok Pesantren') ?></span>
             </a>
             <nav class="nav-links">
-                <a href="/">Beranda</a>
-                <a href="/halaman/profil">Profil</a>
-                <a href="/kategori/kegiatan-santri">Kegiatan</a>
-                <a href="/admin/login">Login</a>
+                <?php
+                $headerMenuSlug = $options['menu_header'] ?? '';
+                $headerMenu = [];
+                if (!empty($headerMenuSlug)) {
+                    try {
+                        $headerMenu = \App\Core\Application::getInstance()->menus()->getResolvedTree($headerMenuSlug);
+                    } catch (\Exception $e) {}
+                }
+                
+                if (!empty($headerMenu)) {
+                    $renderMenu = function($items, $level = 0) use (&$renderMenu) {
+                        if (empty($items)) return;
+                        
+                        foreach ($items as $item) {
+                            $hasChildren = !empty($item['children']);
+                            $target = !empty($item['open_new_tab']) ? ' target="_blank" rel="noopener noreferrer"' : '';
+                            
+                            if ($level === 0) {
+                                echo '<div class="nav-item">';
+                                echo '<a href="' . htmlspecialchars($item['url']) . '"' . $target . '>';
+                                echo htmlspecialchars($item['label']);
+                                if ($hasChildren) echo ' <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 0.3rem;"></i>';
+                                echo '</a>';
+                                
+                                if ($hasChildren) {
+                                    echo '<div class="sub-menu">';
+                                    $renderMenu($item['children'], $level + 1);
+                                    echo '</div>';
+                                }
+                                echo '</div>';
+                            } else {
+                                echo '<div class="sub-nav-item">';
+                                echo '<a href="' . htmlspecialchars($item['url']) . '"' . $target . '>';
+                                echo htmlspecialchars($item['label']);
+                                if ($hasChildren) echo ' <i class="fas fa-chevron-right" style="font-size: 0.7em; margin-left: 0.5rem;"></i>';
+                                echo '</a>';
+                                
+                                if ($hasChildren) {
+                                    echo '<div class="flyout-menu">';
+                                    $renderMenu($item['children'], $level + 1);
+                                    echo '</div>';
+                                }
+                                echo '</div>';
+                            }
+                        }
+                    };
+                    $renderMenu($headerMenu);
+                }
+                ?>
             </nav>
         </div>
     </header>

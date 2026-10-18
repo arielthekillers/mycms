@@ -592,7 +592,7 @@
                     } catch (\Exception $e) {}
                 }
                 
-                if (!empty($headerMenu)):
+                if (!empty($headerMenu)) {
                     $renderMenu = function($items, $level = 0) use (&$renderMenu) {
                         if (empty($items)) return;
                         
@@ -630,13 +630,8 @@
                         }
                     };
                     $renderMenu($headerMenu);
-                else:
+                }
                 ?>
-                    <a href="/">Beranda</a>
-                    <a href="/halaman/profil">Profil</a>
-                    <a href="/kategori/kegiatan-santri">Kegiatan</a>
-                    <a href="/admin/login">Login</a>
-                <?php endif; ?>
             </nav>
             
             <button class="mobile-toggle-btn" id="mobileNavToggle" aria-label="Buka Menu Navigasi">
@@ -663,7 +658,7 @@
         </div>
         <nav class="mobile-nav-body">
             <?php
-            if (!empty($headerMenu)):
+            if (!empty($headerMenu)) {
                 $renderMobileMenu = function($items, $level = 0) use (&$renderMobileMenu) {
                     if (empty($items)) return;
                     echo '<ul class="mobile-menu-list level-' . $level . '">';
@@ -687,15 +682,8 @@
                     echo '</ul>';
                 };
                 $renderMobileMenu($headerMenu);
-            else:
+            }
             ?>
-                <ul class="mobile-menu-list">
-                    <li class="mobile-menu-item"><div class="mobile-menu-link-wrapper"><a href="/">Beranda</a></div></li>
-                    <li class="mobile-menu-item"><div class="mobile-menu-link-wrapper"><a href="/halaman/profil">Profil</a></div></li>
-                    <li class="mobile-menu-item"><div class="mobile-menu-link-wrapper"><a href="/kategori/kegiatan-santri">Kegiatan</a></div></li>
-                    <li class="mobile-menu-item"><div class="mobile-menu-link-wrapper"><a href="/admin/login">Login Admin</a></div></li>
-                </ul>
-            <?php endif; ?>
         </nav>
     </div>
 
