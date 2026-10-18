@@ -25,16 +25,13 @@
     ?>
     <div class="admin-shell">
         <aside class="admin-sidebar">
-            <a href="/" target="_blank" rel="noopener noreferrer" class="admin-brand" title="Buka Halaman Depan Website (Tab Baru)">
+            <a href="/admin/panel" class="admin-brand" title="Dashboard Admin">
                 <div class="brand-logo-icon">
                     <i class="fas fa-mosque"></i>
                 </div>
-                <div class="brand-text-wrap" style="flex: 1;">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <span class="brand-title">Pesantren CMS</span>
-                        <i class="fas fa-arrow-up-right-from-square" style="font-size: 0.68rem; color: #64748b; margin-left: 6px;"></i>
-                    </div>
-                    <span class="brand-tag">Administrator &bull; Kunjungi Web</span>
+                <div class="brand-text-wrap">
+                    <span class="brand-title">Pesantren CMS</span>
+                    <span class="brand-tag">Administrator</span>
                 </div>
             </a>
             <nav id="admin-nav">

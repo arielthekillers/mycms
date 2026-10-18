@@ -53,10 +53,17 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     margin-bottom: 0.25rem;
 }
-a.admin-brand {
-    text-decoration: none;
+a.admin-brand,
+a.admin-brand:hover,
+a.admin-brand:focus,
+a.admin-brand:visited {
+    text-decoration: none !important;
+    color: inherit;
     transition: background 0.2s;
     cursor: pointer;
+}
+a.admin-brand * {
+    text-decoration: none !important;
 }
 a.admin-brand:hover {
     background: rgba(255, 255, 255, 0.05);
@@ -89,6 +96,7 @@ a.admin-brand:hover .brand-logo-icon {
     color: #ffffff;
     letter-spacing: -0.01em;
     line-height: 1.2;
+    white-space: nowrap;
 }
 .brand-tag {
     font-size: 0.64rem;
@@ -97,6 +105,7 @@ a.admin-brand:hover .brand-logo-icon {
     text-transform: uppercase;
     letter-spacing: 0.06em;
     margin-top: 1px;
+    white-space: nowrap;
 }
 
 #admin-nav {
