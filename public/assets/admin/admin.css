@@ -35,8 +35,6 @@ body {
     max-height: 100vh;
     position: sticky;
     top: 0;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
 }
 
 .admin-sidebar::-webkit-scrollbar {
