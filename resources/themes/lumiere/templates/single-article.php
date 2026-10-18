@@ -68,213 +68,197 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
         <?php endif; ?>
 
         <div class="single-article-header-container">
-            <nav class="article-breadcrumb" aria-label="Breadcrumb">
-                <a href="/"><i class="fas fa-home"></i> Beranda</a>
-                <span>&rsaquo;</span>
-                <?php if ($primaryCategory): ?>
-                    <a href="/kategori/<?= htmlspecialchars($primaryCategory['slug']) ?>"><?= htmlspecialchars($primaryCategory['name']) ?></a>
-                    <span>&rsaquo;</span>
-                <?php endif; ?>
-                <span class="current">Artikel</span>
-            </nav>
+            <div class="article-header-card">
+                <div class="article-header-topline">
+                    <nav class="article-breadcrumb" aria-label="Breadcrumb">
+                        <a href="/"><i class="fas fa-home"></i> Beranda</a>
+                        <span class="sep">&rsaquo;</span>
+                        <?php if ($primaryCategory): ?>
+                            <a href="/kategori/<?= htmlspecialchars($primaryCategory['slug']) ?>"><?= htmlspecialchars($primaryCategory['name']) ?></a>
+                            <span class="sep">&rsaquo;</span>
+                        <?php endif; ?>
+                        <span class="current">Artikel</span>
+                    </nav>
 
-            <?php if ($primaryCategory): ?>
-                <a href="/kategori/<?= htmlspecialchars($primaryCategory['slug']) ?>" class="category-pill">
-                    <?= htmlspecialchars($primaryCategory['name']) ?>
-                </a>
-            <?php endif; ?>
+                    <?php if ($primaryCategory): ?>
+                        <a href="/kategori/<?= htmlspecialchars($primaryCategory['slug']) ?>" class="category-pill-compact">
+                            <?= htmlspecialchars($primaryCategory['name']) ?>
+                        </a>
+                    <?php endif; ?>
+                </div>
 
-            <h1 class="single-article-title">
-                <?= htmlspecialchars($article['title']) ?>
-            </h1>
+                <h1 class="single-article-title">
+                    <?= htmlspecialchars($article['title']) ?>
+                </h1>
 
-            <div class="article-meta-bar">
-                <div class="meta-item author-meta">
-                    <div class="author-avatar-badge">
-                        <i class="fas fa-user-edit"></i>
-                    </div>
-                    <div>
-                        <span class="meta-label">Ditulis oleh</span>
+                <div class="article-meta-bar">
+                    <span class="meta-item author-meta">
+                        <i class="fas fa-user-edit meta-icon"></i>
+                        <span class="meta-by">Ditulis oleh</span>
                         <strong class="author-name"><?= htmlspecialchars($authorName) ?></strong>
-                    </div>
-                </div>
-                <div class="meta-divider"></div>
-                <div class="meta-item">
-                    <i class="far fa-calendar-alt meta-icon"></i>
-                    <span><?= $publishedDate ?></span>
-                </div>
-                <div class="meta-divider"></div>
-                <div class="meta-item">
-                    <i class="far fa-clock meta-icon"></i>
-                    <span><?= $readTime ?> Menit Baca</span>
-                </div>
-                <div class="meta-divider"></div>
-                <div class="meta-item">
-                    <i class="far fa-comments meta-icon"></i>
-                    <span><?= count($comments) ?> Komentar</span>
+                    </span>
+                    <span class="meta-dot">&bull;</span>
+                    <span class="meta-item">
+                        <i class="far fa-calendar-alt meta-icon"></i>
+                        <span><?= $publishedDate ?></span>
+                    </span>
+                    <span class="meta-dot">&bull;</span>
+                    <span class="meta-item">
+                        <i class="far fa-clock meta-icon"></i>
+                        <span><?= $readTime ?> Menit Baca</span>
+                    </span>
+                    <span class="meta-dot">&bull;</span>
+                    <span class="meta-item">
+                        <i class="far fa-comments meta-icon"></i>
+                        <span><?= count($comments) ?> Komentar</span>
+                    </span>
                 </div>
             </div>
         </div>
     </header>
 
+    <!-- Flying Share Bar (Fixed & Persistent on Scroll) -->
+    <aside class="article-flying-share" aria-label="Bagikan Artikel">
+        <span class="flying-share-label">BAGIKAN</span>
+        <a href="https://api.whatsapp.com/send?text=<?= urlencode($article['title'] . ' ' . $currentUrl) ?>" target="_blank" rel="noopener" class="flying-share-btn share-wa" title="Bagikan ke WhatsApp" aria-label="Share ke WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($currentUrl) ?>" target="_blank" rel="noopener" class="flying-share-btn share-fb" title="Bagikan ke Facebook" aria-label="Share ke Facebook">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://twitter.com/intent/tweet?text=<?= urlencode($article['title']) ?>&url=<?= urlencode($currentUrl) ?>" target="_blank" rel="noopener" class="flying-share-btn share-tw" title="Bagikan ke X / Twitter" aria-label="Share ke X / Twitter">
+            <i class="fab fa-x-twitter"></i>
+        </a>
+        <button type="button" class="flying-share-btn share-copy" id="btnCopyLink" onclick="copyArticleUrl()" title="Salin Tautan" aria-label="Salin Tautan">
+            <i class="fas fa-link"></i>
+        </button>
+    </aside>
+
     <!-- Main Container -->
     <div class="single-article-container">
+        <!-- Article Body -->
+        <article class="article-body-wrapper">
+            <div class="article-content">
+                <?php
+                $renderedArticleContent = $article['content'] ?? '<p>Konten artikel kosong.</p>';
+                if (!empty($app->events)) {
+                    $renderedArticleContent = $app->events->dispatch('article.before_render', $renderedArticleContent);
+                    $renderedArticleContent = $app->events->dispatch('content.render', $renderedArticleContent);
+                }
+                ?>
+                <?= $renderedArticleContent ?>
+            </div>
 
-        <!-- Content Body -->
-        <div class="article-main-layout">
-            <!-- Share Floating Bar (Desktop) -->
-            <aside class="article-share-aside">
-                <div class="share-sticky-box">
-                    <span class="share-label">BAGIKAN</span>
-                    <a href="https://api.whatsapp.com/send?text=<?= urlencode($article['title'] . ' ' . $currentUrl) ?>" target="_blank" rel="noopener" class="share-btn share-wa" aria-label="Share ke WhatsApp">
-                        <i class="fab fa-whatsapp"></i>
-                    </a>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($currentUrl) ?>" target="_blank" rel="noopener" class="share-btn share-fb" aria-label="Share ke Facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="https://twitter.com/intent/tweet?text=<?= urlencode($article['title']) ?>&url=<?= urlencode($currentUrl) ?>" target="_blank" rel="noopener" class="share-btn share-tw" aria-label="Share ke X / Twitter">
-                        <i class="fab fa-x-twitter"></i>
-                    </a>
-                    <button type="button" class="share-btn share-copy" id="btnCopyLink" title="Salin Tautan" aria-label="Salin Tautan">
-                        <i class="fas fa-link"></i>
-                    </button>
+            <!-- Tags Section -->
+            <?php if (!empty($tags)): ?>
+                <div class="article-tags-wrapper">
+                    <span class="tags-title"><i class="fas fa-tags"></i> Topik:</span>
+                    <div class="tags-list">
+                        <?php foreach ($tags as $tag): ?>
+                            <span class="tag-pill">#<?= htmlspecialchars($tag['name'] ?? $tag) ?></span>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-            </aside>
+            <?php endif; ?>
 
-            <!-- Article Body -->
-            <article class="article-body-wrapper">
-                <div class="article-content">
-                    <?php
-                    $renderedArticleContent = $article['content'] ?? '<p>Konten artikel kosong.</p>';
-                    if (!empty($app->events)) {
-                        $renderedArticleContent = $app->events->dispatch('article.before_render', $renderedArticleContent);
-                        $renderedArticleContent = $app->events->dispatch('content.render', $renderedArticleContent);
-                    }
-                    ?>
-                    <?= $renderedArticleContent ?>
+            <!-- Author Bio Box -->
+            <div class="author-bio-card">
+                <div class="author-bio-avatar">
+                    <i class="fas fa-feather-alt"></i>
+                </div>
+                <div class="author-bio-info">
+                    <h4><?= htmlspecialchars($authorName) ?></h4>
+                    <p class="author-role">Penulis & Redaksi Pondok Pesantren Darussalam</p>
+                    <p class="author-desc">Menyajikan informasi edukatif, warta kegiatan santri, dan artikel keislaman terpercaya untuk masyarakat.</p>
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <section class="comments-section" id="comments">
+                <div class="section-header-row">
+                    <h3 class="comments-heading">
+                        <i class="far fa-comments"></i> Komentar Pembaca (<?= count($comments) ?>)
+                    </h3>
                 </div>
 
-                <!-- Tags Section -->
-                <?php if (!empty($tags)): ?>
-                    <div class="article-tags-wrapper">
-                        <span class="tags-title"><i class="fas fa-tags"></i> Topik:</span>
-                        <div class="tags-list">
-                            <?php foreach ($tags as $tag): ?>
-                                <span class="tag-pill">#<?= htmlspecialchars($tag['name'] ?? $tag) ?></span>
-                            <?php endforeach; ?>
+                <!-- Comments List -->
+                <div class="comments-list">
+                    <?php if (empty($comments)): ?>
+                        <div class="no-comments-box">
+                            <i class="far fa-comment-dots"></i>
+                            <p>Belum ada komentar untuk artikel ini. Jadilah yang pertama berkomentar!</p>
                         </div>
-                    </div>
-                <?php endif; ?>
-
-                <!-- Mobile Share Section -->
-                <div class="mobile-share-bar">
-                    <span class="share-title">Bagikan tulisan ini:</span>
-                    <div class="mobile-share-buttons">
-                        <a href="https://api.whatsapp.com/send?text=<?= urlencode($article['title'] . ' ' . $currentUrl) ?>" target="_blank" rel="noopener" class="share-btn share-wa"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-                        <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($currentUrl) ?>" target="_blank" rel="noopener" class="share-btn share-fb"><i class="fab fa-facebook-f"></i> Facebook</a>
-                        <button type="button" class="share-btn share-copy" onclick="copyArticleUrl()"><i class="fas fa-link"></i> Salin Link</button>
-                    </div>
-                </div>
-
-                <!-- Author Bio Box -->
-                <div class="author-bio-card">
-                    <div class="author-bio-avatar">
-                        <i class="fas fa-feather-alt"></i>
-                    </div>
-                    <div class="author-bio-info">
-                        <h4><?= htmlspecialchars($authorName) ?></h4>
-                        <p class="author-role">Penulis & Redaksi Pondok Pesantren Darussalam</p>
-                        <p class="author-desc">Menyajikan informasi edukatif, warta kegiatan santri, dan artikel keislaman terpercaya untuk masyarakat.</p>
-                    </div>
-                </div>
-
-                <!-- Comments Section -->
-                <section class="comments-section" id="comments">
-                    <div class="section-header-row">
-                        <h3 class="comments-heading">
-                            <i class="far fa-comments"></i> Komentar Pembaca (<?= count($comments) ?>)
-                        </h3>
-                    </div>
-
-                    <!-- Comments List -->
-                    <div class="comments-list">
-                        <?php if (empty($comments)): ?>
-                            <div class="no-comments-box">
-                                <i class="far fa-comment-dots"></i>
-                                <p>Belum ada komentar untuk artikel ini. Jadilah yang pertama berkomentar!</p>
+                    <?php else: ?>
+                        <?php foreach ($comments as $comm): ?>
+                            <div class="comment-item">
+                                <div class="comment-avatar">
+                                    <?= strtoupper(mb_substr($comm['author_name'], 0, 1)) ?>
+                                </div>
+                                <div class="comment-content-box">
+                                    <div class="comment-header">
+                                        <strong class="comment-author"><?= htmlspecialchars($comm['author_name']) ?></strong>
+                                        <span class="comment-date"><?= date('d M Y, H:i', strtotime($comm['created_at'])) ?></span>
+                                    </div>
+                                    <div class="comment-text">
+                                        <?= nl2br(htmlspecialchars($comm['content'])) ?>
+                                    </div>
+                                </div>
                             </div>
-                        <?php else: ?>
-                            <?php foreach ($comments as $comm): ?>
-                                <div class="comment-item">
-                                    <div class="comment-avatar">
-                                        <?= strtoupper(mb_substr($comm['author_name'], 0, 1)) ?>
-                                    </div>
-                                    <div class="comment-content-box">
-                                        <div class="comment-header">
-                                            <strong class="comment-author"><?= htmlspecialchars($comm['author_name']) ?></strong>
-                                            <span class="comment-date"><?= date('d M Y, H:i', strtotime($comm['created_at'])) ?></span>
-                                        </div>
-                                        <div class="comment-text">
-                                            <?= nl2br(htmlspecialchars($comm['content'])) ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
 
-                    <!-- Add Comment Form -->
-                    <div class="comment-form-container">
-                        <h4 class="form-title"><i class="fas fa-pen-nib"></i> Tinggalkan Komentar</h4>
-                        <p class="form-subtitle">Alamat email Anda tidak akan dipublikasikan. Komentar akan dimoderasi sebelum tampil.</p>
+                <!-- Add Comment Form -->
+                <div class="comment-form-container">
+                    <h4 class="form-title"><i class="fas fa-pen-nib"></i> Tinggalkan Komentar</h4>
+                    <p class="form-subtitle">Alamat email Anda tidak akan dipublikasikan. Komentar akan dimoderasi sebelum tampil.</p>
 
-                        <div id="commentAlert" class="comment-alert" style="display: none;"></div>
+                    <div id="commentAlert" class="comment-alert" style="display: none;"></div>
 
-                        <form id="publicCommentForm" class="comment-form">
-                            <input type="hidden" name="article_id" value="<?= $article['id'] ?>">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="author_name">Nama Lengkap *</label>
-                                    <input type="text" id="author_name" name="author_name" required placeholder="Nama Anda">
-                                </div>
-                                <div class="form-group">
-                                    <label for="author_email">Alamat Email *</label>
-                                    <input type="email" id="author_email" name="author_email" required placeholder="email@contoh.com">
-                                </div>
+                    <form id="publicCommentForm" class="comment-form">
+                        <input type="hidden" name="article_id" value="<?= $article['id'] ?>">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="author_name">Nama Lengkap *</label>
+                                <input type="text" id="author_name" name="author_name" required placeholder="Nama Anda">
                             </div>
                             <div class="form-group">
-                                <label for="comment_content">Komentar Anda *</label>
-                                <textarea id="comment_content" name="content" rows="4" required placeholder="Tuliskan pandangan atau tanggapan Anda..."></textarea>
+                                <label for="author_email">Alamat Email *</label>
+                                <input type="email" id="author_email" name="author_email" required placeholder="email@contoh.com">
                             </div>
-                            <button type="submit" id="btnSubmitComment" class="btn-submit-comment">
-                                <i class="fas fa-paper-plane"></i> Kirim Komentar
-                            </button>
-                        </form>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment_content">Komentar Anda *</label>
+                            <textarea id="comment_content" name="content" rows="4" required placeholder="Tuliskan pandangan atau tanggapan Anda..."></textarea>
+                        </div>
+                        <button type="submit" id="btnSubmitComment" class="btn-submit-comment">
+                            <i class="fas fa-paper-plane"></i> Kirim Komentar
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Related Articles Section -->
+            <?php if (!empty($relatedArticles)): ?>
+                <section class="related-articles-section">
+                    <h3 class="related-heading"><i class="fas fa-book-reader"></i> Baca Warta Lainnya</h3>
+                    <div class="related-grid">
+                        <?php foreach ($relatedArticles as $rel): ?>
+                            <a href="/artikel/<?= htmlspecialchars($rel['slug']) ?>" class="related-card">
+                                <span class="rel-date"><i class="far fa-calendar-alt"></i> <?= !empty($rel['published_at']) ? date('d M Y', strtotime($rel['published_at'])) : '' ?></span>
+                                <h4 class="rel-title"><?= htmlspecialchars($rel['title']) ?></h4>
+                                <span class="rel-link">Baca Selengkapnya &rarr;</span>
+                            </a>
+                        <?php endforeach; ?>
                     </div>
                 </section>
+            <?php endif; ?>
 
-                <!-- Related Articles Section -->
-                <?php if (!empty($relatedArticles)): ?>
-                    <section class="related-articles-section">
-                        <h3 class="related-heading"><i class="fas fa-book-reader"></i> Baca Warta Lainnya</h3>
-                        <div class="related-grid">
-                            <?php foreach ($relatedArticles as $rel): ?>
-                                <a href="/artikel/<?= htmlspecialchars($rel['slug']) ?>" class="related-card">
-                                    <span class="rel-date"><i class="far fa-calendar-alt"></i> <?= !empty($rel['published_at']) ? date('d M Y', strtotime($rel['published_at'])) : '' ?></span>
-                                    <h4 class="rel-title"><?= htmlspecialchars($rel['title']) ?></h4>
-                                    <span class="rel-link">Baca Selengkapnya &rarr;</span>
-                                </a>
-                            <?php endforeach; ?>
-                        </div>
-                    </section>
-                <?php endif; ?>
+            <div class="back-home-bottom">
+                <a href="/" class="btn-back-home">&larr; Kembali ke Beranda</a>
+            </div>
 
-                <div class="back-home-bottom">
-                    <a href="/" class="btn-back-home">&larr; Kembali ke Beranda</a>
-                </div>
-
-            </article>
-        </div>
+        </article>
     </div>
 </div>
 
@@ -287,19 +271,19 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
     .article-page-wrapper {
         background-color: var(--bg-light, #f8fafc);
         min-height: 85vh;
-        padding-bottom: 5rem;
+        padding-bottom: 3.5rem;
     }
     
     /* Header & Meta */
     .single-article-header {
         background: linear-gradient(135deg, var(--secondary-color, #0f172a) 0%, #1e293b 100%);
         color: white;
-        padding: 5.5rem 5% 5rem;
+        padding: 4.5rem 1.5rem 3.5rem;
         position: relative;
         text-align: center;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         overflow: hidden;
-        min-height: 380px;
+        min-height: 420px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -322,8 +306,8 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
         height: 100%;
         overflow: hidden;
         z-index: 1;
-        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%);
-        mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+        mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
     }
     .article-header-bg-img {
         width: 100%;
@@ -331,44 +315,49 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
         object-fit: cover;
         object-position: center;
         display: block;
-        transform: scale(1.02);
-        filter: brightness(0.88);
+        filter: none;
     }
     .article-header-overlay {
         position: absolute;
         inset: 0;
         z-index: 2;
-        background: 
-            /* Gradasi vertikal lembut untuk kontras teks judul */
-            linear-gradient(180deg, 
-                rgba(15, 23, 42, 0.65) 0%, 
-                rgba(15, 23, 42, 0.25) 45%, 
-                rgba(15, 23, 42, 0.92) 100%
-            ),
-            /* Gradasi horizontal di sisi gambar */
-            linear-gradient(90deg, 
-                rgba(15, 23, 42, 0.75) 0%, 
-                transparent 25%, 
-                transparent 75%, 
-                rgba(15, 23, 42, 0.75) 100%
-            );
+        /* Subtle edge blending only, leaving center 100% natural and bright */
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, transparent 22%, transparent 80%, rgba(15, 23, 42, 0.45) 100%);
+        pointer-events: none;
     }
     .single-article-header-container {
-        max-width: 920px;
+        max-width: 780px;
         margin: 0 auto;
         position: relative;
         z-index: 3;
         width: 100%;
+        box-sizing: border-box;
     }
-    .article-breadcrumb {
-        font-size: 0.88rem;
-        color: rgba(255, 255, 255, 0.7);
-        margin-bottom: 1.5rem;
+    .article-header-card {
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 20px;
+        padding: 1.5rem 2rem;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+        text-align: center;
+        box-sizing: border-box;
+    }
+    .article-header-topline {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.6rem;
+        gap: 0.75rem;
         flex-wrap: wrap;
+        margin-bottom: 0.85rem;
+    }
+    .article-breadcrumb {
+        font-size: 0.82rem;
+        color: rgba(255, 255, 255, 0.75);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
     }
     .article-breadcrumb a {
         color: rgba(255, 255, 255, 0.85);
@@ -378,210 +367,199 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
     .article-breadcrumb a:hover {
         color: var(--gold);
     }
+    .article-breadcrumb .sep {
+        opacity: 0.6;
+    }
     .article-breadcrumb .current {
         color: var(--gold);
         font-weight: 500;
     }
-    .category-pill {
-        display: inline-block;
-        background: rgba(27, 178, 166, 0.25);
+    .category-pill-compact {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(244, 180, 26, 0.18);
         color: var(--gold);
-        border: 1px solid rgba(244, 180, 26, 0.4);
-        padding: 0.35rem 1.15rem;
+        border: 1px solid rgba(244, 180, 26, 0.45);
+        padding: 0.2rem 0.75rem;
         border-radius: 50px;
-        font-size: 0.82rem;
-        font-weight: 600;
+        font-size: 0.75rem;
+        font-weight: 700;
         letter-spacing: 0.04em;
         text-transform: uppercase;
-        margin-bottom: 1.25rem;
         text-decoration: none;
-        transition: all 0.25s ease;
+        transition: all 0.2s ease;
     }
-    .category-pill:hover {
+    .category-pill-compact:hover {
         background: var(--gold);
         color: #0f172a;
-        transform: translateY(-2px);
     }
     .single-article-title {
-        font-size: 3rem;
+        font-size: 2.1rem;
         font-weight: 800;
-        line-height: 1.2;
-        letter-spacing: -0.025em;
-        margin-bottom: 2rem;
+        line-height: 1.28;
+        letter-spacing: -0.02em;
+        margin: 0 0 1rem;
         color: #ffffff;
-        text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
     .article-meta-bar {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 1.25rem;
-        font-size: 0.9rem;
+        gap: 0.85rem;
+        font-size: 0.82rem;
         color: rgba(255, 255, 255, 0.85);
         flex-wrap: wrap;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 0.45rem 1.15rem;
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-sizing: border-box;
+        max-width: 100%;
     }
     .meta-item {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
     }
-    .author-meta {
-        gap: 0.75rem;
-        text-align: left;
-    }
-    .author-avatar-badge {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.15);
-        color: var(--gold);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.95rem;
-    }
-    .meta-label {
-        display: block;
-        font-size: 0.72rem;
-        text-transform: uppercase;
+    .meta-by {
         opacity: 0.7;
-        letter-spacing: 0.04em;
     }
     .author-name {
-        color: white;
+        color: #ffffff;
         font-weight: 600;
     }
     .meta-icon {
         color: var(--gold);
+        font-size: 0.85rem;
     }
-    .meta-divider {
-        width: 4px;
-        height: 4px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.4);
+    .meta-dot {
+        color: rgba(255, 255, 255, 0.35);
+        font-size: 0.75rem;
     }
 
-    /* Container & Layout */
-    .single-article-container {
-        max-width: 1100px;
-        margin: 2.75rem auto 0;
-        padding: 0 5%;
-        position: relative;
-        z-index: 5;
-    }
-    .article-main-layout {
-        display: grid;
-        grid-template-columns: 60px minmax(0, 1fr);
-        gap: 3.5rem;
-        align-items: start;
-    }
-    .article-share-aside {
-        position: relative;
-    }
-    .share-sticky-box {
-        position: sticky;
-        top: 6rem;
+    /* Flying Share Button (Persistent on Scroll) */
+    .article-flying-share {
+        position: fixed;
+        left: max(1.25rem, calc(50% - 430px - 80px));
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 900;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.85rem;
+        gap: 0.6rem;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        padding: 0.8rem 0.45rem;
+        border-radius: 36px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        transition: all 0.3s ease;
     }
-    .share-label {
-        font-size: 0.65rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        color: var(--text-muted);
+    .flying-share-label {
+        font-size: 0.58rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        color: #64748b;
         writing-mode: vertical-rl;
         transform: rotate(180deg);
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
+        padding: 0.2rem 0;
     }
-    .share-btn {
-        width: 44px;
-        height: 44px;
+    .flying-share-btn {
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         text-decoration: none;
         color: white;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         border: none;
         cursor: pointer;
-        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.12);
     }
-    .share-btn:hover {
-        transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+    .flying-share-btn:hover {
+        transform: scale(1.12);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.22);
     }
     .share-wa { background: #25d366; }
     .share-fb { background: #1877f2; }
     .share-tw { background: #0f1419; }
     .share-copy { background: #64748b; }
 
-    /* Article Body Typography */
+    /* Article Container & Compact Body */
+    .single-article-container {
+        max-width: 860px;
+        margin: 1.75rem auto 0;
+        padding: 0 1.25rem;
+        position: relative;
+        z-index: 5;
+    }
     .article-body-wrapper {
-        min-width: 0;
-        max-width: 100%;
         background: white;
-        border-radius: 24px;
-        padding: 3.5rem 4rem;
-        box-shadow: 0 10px 35px rgba(0,0,0,0.05);
+        border-radius: 20px;
+        padding: 2.25rem 2.75rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.04);
         border: 1px solid #edf2f7;
     }
     .article-content {
-        font-size: 1.15rem;
-        line-height: 1.9;
+        font-size: 1.05rem;
+        line-height: 1.75;
         color: #334155;
     }
     .article-content p {
-        margin-bottom: 1.75rem;
+        margin-bottom: 1.15rem;
     }
     .article-content h2 {
-        font-size: 2rem;
+        font-size: 1.65rem;
         font-weight: 800;
         color: var(--text-main);
-        margin: 2.75rem 0 1.25rem;
+        margin: 1.75rem 0 0.75rem;
         letter-spacing: -0.02em;
         line-height: 1.3;
     }
     .article-content h3 {
-        font-size: 1.5rem;
+        font-size: 1.35rem;
         font-weight: 700;
         color: var(--text-main);
-        margin: 2.25rem 0 1rem;
+        margin: 1.35rem 0 0.5rem;
     }
     .article-content blockquote {
         border-left: 4px solid var(--gold);
         background: #fdfbf7;
-        padding: 1.5rem 2rem;
-        margin: 2.25rem 0;
-        border-radius: 0 16px 16px 0;
+        padding: 1rem 1.35rem;
+        margin: 1.35rem 0;
+        border-radius: 0 12px 12px 0;
         font-style: italic;
         color: #475569;
-        font-size: 1.15rem;
+        font-size: 1.02rem;
     }
     .article-content ul, .article-content ol {
-        margin: 1.5rem 0 2rem 2rem;
+        margin: 1rem 0 1.25rem 1.5rem;
     }
     .article-content li {
-        margin-bottom: 0.6rem;
+        margin-bottom: 0.4rem;
     }
     .article-content img {
         max-width: 100%;
         height: auto;
-        border-radius: 14px;
-        margin: 2rem auto;
+        border-radius: 12px;
+        margin: 1.25rem auto;
         display: block;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.06);
     }
     .article-content table {
         width: 100%;
         border-collapse: collapse;
-        margin: 2rem 0;
+        margin: 1.5rem 0;
     }
     .article-content th, .article-content td {
-        padding: 0.85rem 1rem;
+        padding: 0.7rem 0.85rem;
         border: 1px solid #e2e8f0;
         text-align: left;
     }
@@ -594,144 +572,114 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
     .article-tags-wrapper {
         display: flex;
         align-items: center;
-        gap: 0.85rem;
-        margin: 3rem 0;
-        padding-top: 2rem;
+        gap: 0.75rem;
+        margin: 1.75rem 0 1.25rem;
+        padding-top: 1.25rem;
         border-top: 1px solid #f1f5f9;
         flex-wrap: wrap;
     }
     .tags-title {
         font-weight: 700;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         color: var(--text-main);
     }
     .tag-pill {
         background: #f1f5f9;
         color: var(--teal);
-        padding: 0.35rem 0.9rem;
+        padding: 0.3rem 0.8rem;
         border-radius: 50px;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         font-weight: 500;
-    }
-
-    /* Mobile Share Bar */
-    .mobile-share-bar {
-        display: none;
-        margin: 2.5rem 0;
-        padding: 1.5rem;
-        background: #f8fafc;
-        border-radius: 16px;
-        text-align: center;
-    }
-    .mobile-share-bar .share-title {
-        display: block;
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-        color: var(--text-main);
-    }
-    .mobile-share-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-    }
-    .mobile-share-buttons .share-btn {
-        width: auto;
-        border-radius: 50px;
-        padding: 0.5rem 1.25rem;
-        font-size: 0.88rem;
-        gap: 0.5rem;
     }
 
     /* Author Bio Card */
     .author-bio-card {
         display: flex;
-        gap: 1.75rem;
+        gap: 1.25rem;
         align-items: center;
         background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
         border: 1px solid #e2e8f0;
-        border-radius: 20px;
-        padding: 2rem 2.5rem;
-        margin: 3.5rem 0;
+        border-radius: 16px;
+        padding: 1.25rem 1.75rem;
+        margin: 2rem 0;
     }
     .author-bio-avatar {
-        width: 70px;
-        height: 70px;
+        width: 54px;
+        height: 54px;
         border-radius: 50%;
         background: var(--teal);
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.8rem;
+        font-size: 1.4rem;
         flex-shrink: 0;
-        box-shadow: 0 8px 20px rgba(27, 178, 166, 0.25);
+        box-shadow: 0 6px 16px rgba(27, 178, 166, 0.22);
     }
     .author-bio-info h4 {
-        font-size: 1.25rem;
+        font-size: 1.15rem;
         font-weight: 700;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.2rem;
     }
     .author-role {
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         color: var(--teal);
         font-weight: 600;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.35rem;
     }
     .author-desc {
-        font-size: 0.92rem;
+        font-size: 0.88rem;
         color: var(--text-muted);
-        line-height: 1.6;
+        line-height: 1.55;
         margin: 0;
     }
 
     /* Comments Section */
     .comments-section {
-        margin: 4rem 0 2rem;
-        padding-top: 3rem;
+        margin: 2.5rem 0 1.5rem;
+        padding-top: 2rem;
         border-top: 2px solid #f1f5f9;
     }
     .comments-heading {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         font-weight: 700;
         color: var(--text-main);
-        margin-bottom: 2rem;
+        margin-bottom: 1.25rem;
     }
     .comments-list {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
-        margin-bottom: 3rem;
+        gap: 1rem;
+        margin-bottom: 2rem;
     }
     .no-comments-box {
         text-align: center;
-        padding: 3rem 1.5rem;
+        padding: 2.25rem 1.25rem;
         background: #f8fafc;
-        border-radius: 16px;
+        border-radius: 14px;
         color: var(--text-muted);
     }
     .no-comments-box i {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
         color: #cbd5e1;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
     }
     .comment-item {
         display: flex;
-        gap: 1.25rem;
-        padding: 1.5rem;
-        border-radius: 16px;
+        gap: 1rem;
+        padding: 1.15rem 1.25rem;
+        border-radius: 14px;
         background: #f8fafc;
         border: 1px solid #edf2f7;
     }
     .comment-avatar {
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         background: var(--teal);
         color: white;
         font-weight: 700;
-        font-size: 1.1rem;
+        font-size: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -744,45 +692,45 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.35rem;
     }
     .comment-author {
-        font-size: 0.95rem;
+        font-size: 0.92rem;
         color: var(--text-main);
     }
     .comment-date {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: var(--text-muted);
     }
     .comment-text {
-        font-size: 0.95rem;
+        font-size: 0.92rem;
         color: #475569;
-        line-height: 1.6;
+        line-height: 1.55;
     }
 
     /* Comment Form */
     .comment-form-container {
         background: #f8fafc;
         border: 1px solid #e2e8f0;
-        border-radius: 20px;
-        padding: 2.5rem;
+        border-radius: 16px;
+        padding: 1.75rem 2rem;
     }
     .form-title {
-        font-size: 1.25rem;
+        font-size: 1.15rem;
         font-weight: 700;
-        margin-bottom: 0.35rem;
+        margin-bottom: 0.25rem;
         color: var(--text-main);
     }
     .form-subtitle {
-        font-size: 0.88rem;
+        font-size: 0.84rem;
         color: var(--text-muted);
-        margin-bottom: 1.75rem;
+        margin-bottom: 1.25rem;
     }
     .comment-alert {
-        padding: 1rem 1.25rem;
-        border-radius: 12px;
-        font-size: 0.92rem;
-        margin-bottom: 1.5rem;
+        padding: 0.85rem 1.15rem;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        margin-bottom: 1.25rem;
     }
     .comment-alert.success {
         background: #ecfdf5;
@@ -797,26 +745,26 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
     .form-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 1.25rem;
-        margin-bottom: 1.25rem;
+        gap: 1rem;
+        margin-bottom: 1rem;
     }
     .form-group {
-        margin-bottom: 1.25rem;
+        margin-bottom: 1rem;
     }
     .form-group label {
         display: block;
-        font-size: 0.88rem;
+        font-size: 0.84rem;
         font-weight: 600;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.35rem;
         color: var(--text-main);
     }
     .form-group input, .form-group textarea {
         width: 100%;
-        padding: 0.75rem 1rem;
+        padding: 0.65rem 0.85rem;
         border: 1px solid #cbd5e1;
-        border-radius: 10px;
+        border-radius: 8px;
         font-family: inherit;
-        font-size: 0.92rem;
+        font-size: 0.88rem;
         background: white;
         transition: border-color 0.2s, box-shadow 0.2s;
     }
@@ -829,14 +777,14 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
         background: var(--teal);
         color: white;
         border: none;
-        padding: 0.85rem 2rem;
+        padding: 0.75rem 1.75rem;
         border-radius: 50px;
         font-weight: 600;
-        font-size: 0.92rem;
+        font-size: 0.88rem;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.45rem;
         transition: all 0.25s ease;
     }
     .btn-submit-comment:hover {
@@ -847,70 +795,70 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
 
     /* Related Section */
     .related-articles-section {
-        margin-top: 4rem;
-        padding-top: 3rem;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
         border-top: 1px solid #edf2f7;
     }
     .related-heading {
-        font-size: 1.35rem;
+        font-size: 1.25rem;
         font-weight: 700;
-        margin-bottom: 1.75rem;
+        margin-bottom: 1.25rem;
         color: var(--text-main);
     }
     .related-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 1.5rem;
+        gap: 1.25rem;
     }
     .related-card {
         display: flex;
         flex-direction: column;
-        padding: 1.5rem;
+        padding: 1.25rem;
         background: #f8fafc;
         border: 1px solid #edf2f7;
-        border-radius: 16px;
+        border-radius: 14px;
         text-decoration: none;
         transition: all 0.25s ease;
     }
     .related-card:hover {
         background: white;
         border-color: var(--teal);
-        transform: translateY(-4px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.06);
     }
     .rel-date {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         color: var(--teal);
         font-weight: 600;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.4rem;
     }
     .rel-title {
-        font-size: 1.05rem;
+        font-size: 0.95rem;
         font-weight: 700;
         color: var(--text-main);
         line-height: 1.4;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
         flex: 1;
     }
     .rel-link {
-        font-size: 0.84rem;
+        font-size: 0.8rem;
         font-weight: 600;
         color: var(--teal);
     }
 
     .back-home-bottom {
-        margin-top: 3.5rem;
+        margin-top: 2.25rem;
         text-align: center;
     }
     .btn-back-home {
         display: inline-block;
-        padding: 0.75rem 2rem;
+        padding: 0.65rem 1.75rem;
         border-radius: 50px;
         border: 2px solid var(--teal);
         color: var(--teal);
         text-decoration: none;
         font-weight: 600;
-        font-size: 0.92rem;
+        font-size: 0.88rem;
         transition: all 0.25s ease;
     }
     .btn-back-home:hover {
@@ -926,13 +874,13 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
         transform: translateX(-50%) translateY(100px);
         background: #0f172a;
         color: white;
-        padding: 0.85rem 1.75rem;
+        padding: 0.75rem 1.5rem;
         border-radius: 50px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        font-size: 0.92rem;
+        gap: 0.6rem;
+        font-size: 0.88rem;
         font-weight: 500;
         z-index: 1000;
         opacity: 0;
@@ -944,25 +892,54 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
     }
     .link-copied-toast i {
         color: #10b981;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
     }
 
     /* Responsiveness */
-    @media (max-width: 992px) {
-        .single-article-title { font-size: 2.4rem; }
-        .article-main-layout { grid-template-columns: 1fr; gap: 0; }
-        .article-share-aside { display: none; }
-        .mobile-share-bar { display: block; }
+    @media (max-width: 1080px) {
+        .single-article-title { font-size: 1.65rem; }
+        .article-header-card { padding: 1.35rem 1.25rem; }
+        .article-body-wrapper { padding: 2rem 1.5rem; }
         .related-grid { grid-template-columns: 1fr; }
-        .article-body-wrapper { padding: 2.5rem 2rem; }
+        
+        /* Floating Share Bar on Tablets & Mobile: Floating Dock at bottom */
+        .article-flying-share {
+            left: 50%;
+            top: auto;
+            bottom: 1.25rem;
+            transform: translateX(-50%);
+            flex-direction: row;
+            padding: 0.45rem 0.85rem;
+            border-radius: 50px;
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            gap: 0.65rem;
+        }
+        .flying-share-label {
+            display: none;
+        }
+        .flying-share-btn {
+            width: 38px;
+            height: 38px;
+            font-size: 0.95rem;
+        }
+        #backToTop {
+            bottom: 4.8rem !important;
+            right: 1.25rem !important;
+        }
     }
     @media (max-width: 640px) {
-        .single-article-title { font-size: 1.85rem; }
-        .single-article-header { padding: 3.5rem 1.25rem 3.5rem; min-height: 320px; }
-        .single-article-container { margin-top: 1.75rem; padding: 0 4%; }
-        .article-body-wrapper { padding: 2rem 1.25rem; }
+        .single-article-title { font-size: 1.35rem; }
+        .single-article-header { padding: 3rem 1rem 2.5rem; min-height: 340px; }
+        .article-header-card { padding: 1.15rem 1rem; border-radius: 16px; }
+        .article-meta-bar { font-size: 0.74rem; padding: 0.35rem 0.75rem; gap: 0.45rem; }
+        .single-article-container { margin-top: 1.25rem; padding: 0 0.85rem; }
+        .article-body-wrapper { padding: 1.5rem 1.1rem; border-radius: 18px; }
         .form-grid { grid-template-columns: 1fr; }
-        .author-bio-card { flex-direction: column; text-align: center; }
+        .author-bio-card { flex-direction: column; text-align: center; padding: 1.25rem; }
     }
 </style>
 
