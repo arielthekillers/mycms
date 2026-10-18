@@ -1,0 +1,4 @@
+/scratch/*
+!/scratch/.gitkeep
+/storage/cache/*
+!/storage/cache/.gitkeep
