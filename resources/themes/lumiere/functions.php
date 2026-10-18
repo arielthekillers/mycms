@@ -2,8 +2,8 @@
 
 // Mendaftarkan menu navigasi khusus untuk tema ini di sistem
 $app->events->listen('menu.register', function ($menus) {
-    $menus['lumiere_header'] = 'Navigasi Atas (Lumière)';
-    $menus['lumiere_footer'] = 'Tautan Bawah (Lumière)';
+    $menus['lumiere_header'] = 'Navigasi Atas (Al-Uula)';
+    $menus['lumiere_footer'] = 'Tautan Bawah (Al-Uula)';
     return $menus;
 });
 
@@ -32,7 +32,7 @@ try {
 // Menambahkan label pada footer artikel
 $app->events->listen('article.before_render', function ($content) use ($app) {
     $year = date('Y');
-    $content = $content . "<hr style='margin-top: 3rem; border: none; border-top: 1px solid #e2e8f0;'><p style='font-size: 0.85rem; color: #64748b;'><em>&copy; {$year} Dibuat dengan tema Lumière.</em></p>";
+    $content = $content . "<hr style='margin-top: 3rem; border: none; border-top: 1px solid #e2e8f0;'><p style='font-size: 0.85rem; color: #64748b;'><em>&copy; {$year} Dibuat dengan tema Al-Uula.</em></p>";
     return $content;
 });
 
