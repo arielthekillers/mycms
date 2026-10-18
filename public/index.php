@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+if (php_sapi_name() === 'cli-server') {
+    $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    if ($uri !== '/' && file_exists(__DIR__ . $uri) && is_file(__DIR__ . $uri)) {
+        return false;
+    }
+}
+
 use App\Core\Application;
 use App\Core\Auth\Session;
 use App\Core\View;

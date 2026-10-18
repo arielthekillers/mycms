@@ -23,7 +23,7 @@ match ($command) {
     'migrate:status' => runStatus($migrator),
     'db:seed' => runSeed($app),
     'make:user' => runMakeUser($app),
-    'queue:work' => runQueueWork($app, $argv[2] ?? 'default'),
+    'queue:work' => runQueueWork($app, (!isset($argv[2]) || str_starts_with($argv[2], '--')) ? 'default' : $argv[2], array_slice($argv, 2)),
     'cache:clear' => runCacheClear($app),
     default => printUsage(),
 };
@@ -111,14 +111,19 @@ function runMakeUser(Application $app): void
     echo "User #{$userId} created and assigned role '{$role}'.\n";
 }
 
-function runQueueWork(Application $app, string $queue = 'default'): void
+function runQueueWork(Application $app, string $queue = 'default', array $args = []): void
 {
+    $stopWhenEmpty = in_array('--stop-when-empty', $args, true) || in_array('--once', $args, true);
     echo "Working queue '{$queue}'. Press Ctrl+C to stop.\n";
 
     while (true) {
         $processed = $app->queue->workOnce($queue);
 
         if (!$processed) {
+            if ($stopWhenEmpty) {
+                echo "Queue is empty. Exiting.\n";
+                break;
+            }
             usleep(500_000); // no jobs — avoid busy-looping the CPU
         }
     }
@@ -141,7 +146,7 @@ function printUsage(): void
       php bin/console migrate:status     Show migration status
       php bin/console db:seed            Seed default modules + roles/permissions
       php bin/console make:user          Interactively create a user + assign a role
-      php bin/console queue:work [queue] Process background jobs (default queue: "default")
+      php bin/console queue:work [queue] [--stop-when-empty] Process background jobs
       php bin/console cache:clear        Flush the full-page/fragment cache
 
     TXT;

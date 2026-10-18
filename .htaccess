@@ -1,0 +1,22 @@
+# ----------------------------------------------------------------------
+# Root .htaccess for Shared Hosting (cPanel / Apache / LiteSpeed)
+# ----------------------------------------------------------------------
+
+# Disable Directory Browsing
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1. Block access to sensitive and configuration files
+    RewriteRule ^(\.env|\.git|composer\.(json|lock)|package(-lock)?\.json|.*\.sql|.*\.md)$ - [F,L,NC]
+
+    # 2. Block direct access to internal application and storage folders
+    RewriteRule ^(app|bin|config|database|resources|scratch|storage)/(.*)$ - [F,L,NC]
+
+    # 3. If request is already directed to public/, pass through
+    RewriteRule ^public/ - [L]
+
+    # 4. Rewrite all other web requests to the public/ directory
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
+</IfModule>

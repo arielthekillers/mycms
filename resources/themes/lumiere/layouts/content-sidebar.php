@@ -33,6 +33,7 @@
             --radius-lg: 20px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        img { max-width: 100%; height: auto; }
         html { scroll-behavior: smooth; }
         body {
             font-family: 'Poppins', sans-serif;
