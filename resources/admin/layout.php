@@ -25,15 +25,18 @@
     ?>
     <div class="admin-shell">
         <aside class="admin-sidebar">
-            <div class="admin-brand">
+            <a href="/" target="_blank" rel="noopener noreferrer" class="admin-brand" title="Buka Halaman Depan Website (Tab Baru)">
                 <div class="brand-logo-icon">
                     <i class="fas fa-mosque"></i>
                 </div>
-                <div class="brand-text-wrap">
-                    <span class="brand-title">Pesantren CMS</span>
-                    <span class="brand-tag">Administrator</span>
+                <div class="brand-text-wrap" style="flex: 1;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span class="brand-title">Pesantren CMS</span>
+                        <i class="fas fa-arrow-up-right-from-square" style="font-size: 0.68rem; color: #64748b; margin-left: 6px;"></i>
+                    </div>
+                    <span class="brand-tag">Administrator &bull; Kunjungi Web</span>
                 </div>
-            </div>
+            </a>
             <nav id="admin-nav">
                 <!-- Group 1: UTAMA -->
                 <div class="nav-section-title">UTAMA</div>
@@ -135,6 +138,12 @@
                     <h1><?= htmlspecialchars($title ?? 'Admin') ?></h1>
                 </div>
                 <div class="admin-user">
+                    <a href="/" target="_blank" rel="noopener noreferrer" class="btn-view-site" title="Buka Halaman Depan Website (Tab Baru)">
+                        <i class="fas fa-globe"></i>
+                        <span class="btn-view-site-text">Lihat Website</span>
+                        <i class="fas fa-arrow-up-right-from-square" style="font-size: 0.7rem; opacity: 0.85;"></i>
+                    </a>
+                    <div class="topbar-divider"></div>
                     <a href="/admin/panel/profile" id="admin-current-user" class="admin-current-user-info" style="text-decoration:none; color:inherit;"></a>
                     <form method="post" action="/admin/logout" style="display:inline" title="Keluar">
                         <input type="hidden" name="_token" value="<?= htmlspecialchars(\App\Core\Auth\Session::csrfToken()) ?>">
