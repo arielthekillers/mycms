@@ -58,61 +58,52 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
 ?>
 
 <div class="article-page-wrapper">
-    <!-- Header Hero / Meta Section with Featured Image Background -->
-    <header class="single-article-header <?= $featuredImg ? 'has-featured-bg' : '' ?>">
-        <?php if ($featuredImg): ?>
-            <div class="article-header-bg" aria-hidden="true">
-                <img src="<?= htmlspecialchars($featuredImg) ?>" alt="<?= htmlspecialchars($article['title']) ?>" class="article-header-bg-img">
-                <div class="article-header-overlay"></div>
-            </div>
-        <?php endif; ?>
-
+    <!-- Header Meta Section (Title & Meta outside of image) -->
+    <header class="single-article-header">
         <div class="single-article-header-container">
-            <div class="article-header-card">
-                <div class="article-header-topline">
-                    <nav class="article-breadcrumb" aria-label="Breadcrumb">
-                        <a href="/"><i class="fas fa-home"></i> Beranda</a>
-                        <span class="sep">&rsaquo;</span>
-                        <?php if ($primaryCategory): ?>
-                            <a href="/kategori/<?= htmlspecialchars($primaryCategory['slug']) ?>"><?= htmlspecialchars($primaryCategory['name']) ?></a>
-                            <span class="sep">&rsaquo;</span>
-                        <?php endif; ?>
-                        <span class="current">Artikel</span>
-                    </nav>
-
+            <div class="article-header-topline">
+                <nav class="article-breadcrumb" aria-label="Breadcrumb">
+                    <a href="/"><i class="fas fa-home"></i> Beranda</a>
+                    <span class="sep">&rsaquo;</span>
                     <?php if ($primaryCategory): ?>
-                        <a href="/kategori/<?= htmlspecialchars($primaryCategory['slug']) ?>" class="category-pill-compact">
-                            <?= htmlspecialchars($primaryCategory['name']) ?>
-                        </a>
+                        <a href="/kategori/<?= htmlspecialchars($primaryCategory['slug']) ?>"><?= htmlspecialchars($primaryCategory['name']) ?></a>
+                        <span class="sep">&rsaquo;</span>
                     <?php endif; ?>
-                </div>
+                    <span class="current">Artikel</span>
+                </nav>
 
-                <h1 class="single-article-title">
-                    <?= htmlspecialchars($article['title']) ?>
-                </h1>
+                <?php if ($primaryCategory): ?>
+                    <a href="/kategori/<?= htmlspecialchars($primaryCategory['slug']) ?>" class="category-pill-compact">
+                        <?= htmlspecialchars($primaryCategory['name']) ?>
+                    </a>
+                <?php endif; ?>
+            </div>
 
-                <div class="article-meta-bar">
-                    <span class="meta-item author-meta">
-                        <i class="fas fa-user-edit meta-icon"></i>
-                        <span class="meta-by">Ditulis oleh</span>
-                        <strong class="author-name"><?= htmlspecialchars($authorName) ?></strong>
-                    </span>
-                    <span class="meta-dot">&bull;</span>
-                    <span class="meta-item">
-                        <i class="far fa-calendar-alt meta-icon"></i>
-                        <span><?= $publishedDate ?></span>
-                    </span>
-                    <span class="meta-dot">&bull;</span>
-                    <span class="meta-item">
-                        <i class="far fa-clock meta-icon"></i>
-                        <span><?= $readTime ?> Menit Baca</span>
-                    </span>
-                    <span class="meta-dot">&bull;</span>
-                    <span class="meta-item">
-                        <i class="far fa-comments meta-icon"></i>
-                        <span><?= count($comments) ?> Komentar</span>
-                    </span>
-                </div>
+            <h1 class="single-article-title">
+                <?= htmlspecialchars($article['title']) ?>
+            </h1>
+
+            <div class="article-meta-bar">
+                <span class="meta-item author-meta">
+                    <i class="fas fa-user-edit meta-icon"></i>
+                    <span class="meta-by">Ditulis oleh</span>
+                    <strong class="author-name"><?= htmlspecialchars($authorName) ?></strong>
+                </span>
+                <span class="meta-dot">&bull;</span>
+                <span class="meta-item">
+                    <i class="far fa-calendar-alt meta-icon"></i>
+                    <span><?= $publishedDate ?></span>
+                </span>
+                <span class="meta-dot">&bull;</span>
+                <span class="meta-item">
+                    <i class="far fa-clock meta-icon"></i>
+                    <span><?= $readTime ?> Menit Baca</span>
+                </span>
+                <span class="meta-dot">&bull;</span>
+                <span class="meta-item">
+                    <i class="far fa-comments meta-icon"></i>
+                    <span><?= count($comments) ?> Komentar</span>
+                </span>
             </div>
         </div>
     </header>
@@ -136,6 +127,13 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
 
     <!-- Main Container -->
     <div class="single-article-container">
+        <!-- Featured Image (Unobstructed & Clean) -->
+        <?php if ($featuredImg): ?>
+            <div class="featured-image-wrapper">
+                <img src="<?= htmlspecialchars($featuredImg) ?>" alt="<?= htmlspecialchars($article['title']) ?>" class="featured-image">
+            </div>
+        <?php endif; ?>
+
         <!-- Article Body -->
         <article class="article-body-wrapper">
             <div class="article-content">
@@ -278,70 +276,25 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
     .single-article-header {
         background: linear-gradient(135deg, var(--secondary-color, #0f172a) 0%, #1e293b 100%);
         color: white;
-        padding: 4.5rem 1.5rem 3.5rem;
+        padding: 3.5rem 1.5rem 3rem;
         position: relative;
         text-align: center;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         overflow: hidden;
-        min-height: 420px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
-    .single-article-header:not(.has-featured-bg)::before {
+    .single-article-header::before {
         content: '';
         position: absolute;
         inset: 0;
-        background: radial-gradient(circle at 50% 10%, rgba(27, 178, 166, 0.25) 0%, transparent 75%);
-        pointer-events: none;
-    }
-    .article-header-bg {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100%;
-        max-width: 1100px;
-        height: 100%;
-        overflow: hidden;
-        z-index: 1;
-        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
-        mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
-    }
-    .article-header-bg-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        display: block;
-        filter: none;
-    }
-    .article-header-overlay {
-        position: absolute;
-        inset: 0;
-        z-index: 2;
-        /* Subtle edge blending only, leaving center 100% natural and bright */
-        background: linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, transparent 22%, transparent 80%, rgba(15, 23, 42, 0.45) 100%);
+        background: radial-gradient(circle at 50% 15%, rgba(27, 178, 166, 0.22) 0%, transparent 70%);
         pointer-events: none;
     }
     .single-article-header-container {
-        max-width: 780px;
+        max-width: 860px;
         margin: 0 auto;
         position: relative;
         z-index: 3;
         width: 100%;
-        box-sizing: border-box;
-    }
-    .article-header-card {
-        background: rgba(15, 23, 42, 0.75);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 1px solid rgba(255, 255, 255, 0.16);
-        border-radius: 20px;
-        padding: 1.5rem 2rem;
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
-        text-align: center;
         box-sizing: border-box;
     }
     .article-header-topline {
@@ -394,11 +347,11 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
         color: #0f172a;
     }
     .single-article-title {
-        font-size: 2.1rem;
+        font-size: 2.35rem;
         font-weight: 800;
-        line-height: 1.28;
-        letter-spacing: -0.02em;
-        margin: 0 0 1rem;
+        line-height: 1.25;
+        letter-spacing: -0.025em;
+        margin: 0 0 1.25rem;
         color: #ffffff;
         text-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
@@ -436,6 +389,22 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
     .meta-dot {
         color: rgba(255, 255, 255, 0.35);
         font-size: 0.75rem;
+    }
+
+    /* Featured Image (Dedicated & Unobstructed) */
+    .featured-image-wrapper {
+        margin-bottom: 1.5rem;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        background: #0f172a;
+    }
+    .featured-image {
+        width: 100%;
+        height: auto;
+        max-height: 520px;
+        object-fit: cover;
+        display: block;
     }
 
     /* Flying Share Button (Persistent on Scroll) */
@@ -897,8 +866,7 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
 
     /* Responsiveness */
     @media (max-width: 1080px) {
-        .single-article-title { font-size: 1.65rem; }
-        .article-header-card { padding: 1.35rem 1.25rem; }
+        .single-article-title { font-size: 1.85rem; }
         .article-body-wrapper { padding: 2rem 1.5rem; }
         .related-grid { grid-template-columns: 1fr; }
         
@@ -932,12 +900,13 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
         }
     }
     @media (max-width: 640px) {
-        .single-article-title { font-size: 1.35rem; }
-        .single-article-header { padding: 3rem 1rem 2.5rem; min-height: 340px; }
-        .article-header-card { padding: 1.15rem 1rem; border-radius: 16px; }
+        .single-article-title { font-size: 1.4rem; margin-bottom: 1rem; }
+        .single-article-header { padding: 2.5rem 1rem 2rem; }
         .article-meta-bar { font-size: 0.74rem; padding: 0.35rem 0.75rem; gap: 0.45rem; }
         .single-article-container { margin-top: 1.25rem; padding: 0 0.85rem; }
-        .article-body-wrapper { padding: 1.5rem 1.1rem; border-radius: 18px; }
+        .featured-image-wrapper { border-radius: 14px; margin-bottom: 1rem; }
+        .featured-image { max-height: 280px; }
+        .article-body-wrapper { padding: 1.5rem 1.1rem; border-radius: 16px; }
         .form-grid { grid-template-columns: 1fr; }
         .author-bio-card { flex-direction: column; text-align: center; padding: 1.25rem; }
     }
