@@ -299,7 +299,7 @@ $publishedDate = !empty($article['published_at']) ? date('d F Y', strtotime($art
                         <h4 class="author-title"><?= htmlspecialchars($authorName) ?></h4>
                         <span class="author-badge"><i class="fas fa-check-circle"></i> Penulis Terverifikasi</span>
                     </div>
-                    <p class="author-role">Redaksi & Kontributor Pondok Pesantren Darussalam</p>
+                    <p class="author-role">Redaksi & Kontributor <?= htmlspecialchars($site['site_name'] ?? 'Pesantren') ?></p>
                     <p class="author-desc">Menyajikan informasi edukatif, warta kegiatan santri, dan artikel keislaman terpercaya untuk mencerdaskan umat dan masyarakat.</p>
                 </div>
             </div>

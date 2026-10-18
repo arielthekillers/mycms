@@ -366,87 +366,18 @@ try {
 <?php endif; ?>
 
 <!-- Tentang Section -->
+<?php if (!empty($global['homepage_tentang'])): ?>
 <section class="tentang-section" id="tentang">
-    <?php if (!empty($global['homepage_tentang'])): ?>
-        <?= $global['homepage_tentang'] ?>
-    <?php else: ?>
-        <h2 class="section-title">Tentang Pesantren</h2>
-        <p class="section-subtitle">
-            Berdirinya Pondok Pesantren Darussalam Bogor merupakan perwujudan dari niat amal ibadah, rasa cinta, dan itibar terhadap Pendiri Pondok Modern Gontor K.H. Ahmad Sahal, K.H. Imam Zarkasyi, dan K.H. Zainuddin Fananie. Sejak didirikan pada tahun ajaran 1992-1993, Darussalam terus teguh menjaga nilai dan falsafah kepesantrenan.
-        </p>
-        
-        <div class="tentang-cards">
-            <a href="#profil" class="t-card">
-                <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800" alt="Visi Misi">
-                <div class="t-card-overlay">
-                    <h4>Visi & Misi</h4>
-                    <span>Pelajari Nilai Pokok &rarr;</span>
-                </div>
-            </a>
-            <a href="#profil" class="t-card">
-                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800" alt="Panca Jiwa">
-                <div class="t-card-overlay">
-                    <h4>Panca Jiwa</h4>
-                    <span>Falsafah Hidup Santri &rarr;</span>
-                </div>
-            </a>
-            <a href="#profil" class="t-card">
-                <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800" alt="Moto">
-                <div class="t-card-overlay">
-                    <h4>Moto Lembaga</h4>
-                    <span>Prinsip Perjuangan &rarr;</span>
-                </div>
-            </a>
-            <a href="#profil" class="t-card">
-                <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80&w=800" alt="Panca Jangka">
-                <div class="t-card-overlay">
-                    <h4>Panca Jangka</h4>
-                    <span>Rencana Masa Depan &rarr;</span>
-                </div>
-            </a>
-        </div>
-    <?php endif; ?>
+    <?= $global['homepage_tentang'] ?>
 </section>
+<?php endif; ?>
 
 <!-- Profil Section -->
+<?php if (!empty($global['homepage_profil'])): ?>
 <section class="profil-section" id="profil">
-    <?php if (!empty($global['homepage_profil'])): ?>
-        <?= $global['homepage_profil'] ?>
-    <?php else: ?>
-        <h2 class="section-title">Profil Singkat Darussalam</h2>
-        
-        <div class="profil-grid">
-            <div class="profil-item">
-                <i class="fas fa-university"></i>
-                <h4>Didirikan pada tahun 1992</h4>
-                <p>Tiga dekade lebih mendedikasikan diri membina santri dengan pendidikan Islam berbasis ilmu dan akhlak mulia.</p>
-            </div>
-            <div class="profil-item">
-                <i class="fas fa-users"></i>
-                <h4>Lebih dari 700 santri aktif</h4>
-                <p>Membina ratusan santri dari berbagai penjuru tanah air dalam lingkungan asrama yang asri dan kondusif.</p>
-            </div>
-            <div class="profil-item">
-                <i class="fas fa-book-open"></i>
-                <h4>Kurikulum Unggulan</h4>
-                <p>Memadukan kurikulum keislaman, Bahasa Arab, Bahasa Inggris, dan sains teknologi terkini secara seimbang.</p>
-            </div>
-        </div>
-        
-        <div class="profil-bottom">
-            <div class="profil-item">
-                <i class="fas fa-laptop-house"></i>
-                <h4>Sarana & Prasarana Lengkap</h4>
-                <p>Dilengkapi masjid megah, asrama representatif, laboratorium komputer & bahasa, serta area olahraga terpadu.</p>
-            </div>
-            <div class="profil-item">
-                <i class="fas fa-certificate"></i>
-                <h4>Segudang Prestasi</h4>
-                <p>Raihan prestasi membanggakan santri di tingkat regional maupun nasional di bidang akademik dan kepesantrenan.</p>
-            </div>
-        </div>
-    <?php endif; ?>
+    <?= $global['homepage_profil'] ?>
 </section>
+<?php endif; ?>
 
 <!-- Berita Section -->
 <?php

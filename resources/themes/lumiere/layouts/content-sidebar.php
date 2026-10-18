@@ -196,20 +196,24 @@
         </aside>
     </div>
 
+    <?php 
+    $hasFooterWidgets = !empty($global['footer_1']) || !empty($global['footer_2']) || !empty($global['footer_3']);
+    ?>
+    <?php if ($hasFooterWidgets): ?>
     <footer class="site-footer">
         <div class="footer-grid">
             <div class="footer-col">
-                <?= $global['footer_1'] ?? '<h3>Darussalam</h3><p>Pondok Pesantren Modern</p>' ?>
+                <?= $global['footer_1'] ?? '' ?>
             </div>
             <div class="footer-col" style="text-align: center;">
-                <i class="fas fa-mosque" style="font-size: 4rem; color: var(--gold); margin-bottom: 1rem;"></i>
-                <h3><?= htmlspecialchars($site['site_name'] ?? 'Pondok Pesantren') ?></h3>
+                <?= $global['footer_2'] ?? '' ?>
             </div>
             <div class="footer-col">
                 <?= $global['footer_3'] ?? '' ?>
             </div>
         </div>
     </footer>
+    <?php endif; ?>
 
     <div class="site-footer-bottom">
         &copy; <?= date('Y') ?> <?= htmlspecialchars($site['site_name'] ?? 'Pondok Pesantren') ?>. Seluruh hak cipta dilindungi.

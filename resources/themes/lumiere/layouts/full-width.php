@@ -703,77 +703,26 @@
         <?= $content ?>
     </main>
 
+    <?php 
+    $hasFooterWidgets = !empty($global['footer_1']) || !empty($global['footer_2']) || !empty($global['footer_3']);
+    ?>
+    <?php if ($hasFooterWidgets): ?>
     <footer class="site-footer">
         <div class="footer-grid">
             <div class="footer-col">
-                <?php if (!empty($global['footer_1'])): ?>
-                    <?= $global['footer_1'] ?>
-                <?php else: ?>
-                    <h3>Hubungi Kami</h3>
-                    <p><i class="fas fa-envelope" style="margin-right: 8px; color: var(--gold);"></i> pesantrendarussalambogor@gmail.com</p>
-                    <p><i class="fas fa-phone" style="margin-right: 8px; color: var(--gold);"></i> 021 1234567</p>
-                    
-                    <h3 style="margin-top: 2rem;">Alamat</h3>
-                    <p><i class="fas fa-map-marker-alt" style="margin-right: 8px; color: var(--gold);"></i> Kampung Cibeureum, Jl. Cibeureum, Petir, Dramaga, Kabupaten Bogor, Jawa Barat 16680</p>
-                    
-                    <div class="footer-buttons">
-                        <a href="https://maps.google.com" target="_blank" rel="noopener" class="footer-btn"><i class="fas fa-location-arrow"></i> Google Maps</a>
-                        <a href="mailto:pesantrendarussalambogor@gmail.com" class="footer-btn"><i class="fas fa-paper-plane"></i> Kirim Email</a>
-                    </div>
-                <?php endif; ?>
+                <?= $global['footer_1'] ?? '' ?>
             </div>
             
             <div class="footer-col footer-center">
-                <?php if (!empty($global['footer_2'])): ?>
-                    <?= $global['footer_2'] ?>
-                <?php else: ?>
-                    <i class="fas fa-mosque" style="font-size: 5rem; color: var(--gold); margin-bottom: 1.25rem;"></i>
-                    <h3 style="margin-bottom: 0;">PONDOK PESANTREN</h3>
-                    <h3>DARUSSALAM BOGOR</h3>
-                <?php endif; ?>
+                <?= $global['footer_2'] ?? '' ?>
             </div>
             
             <div class="footer-col">
-                <?php if (!empty($global['footer_3'])): ?>
-                    <?= $global['footer_3'] ?>
-                <?php else: ?>
-                    <h3>Tentang Lembaga</h3>
-                    <p style="text-align: justify; font-size: 0.9rem;">
-                        Pondok Pesantren Darussalam Bogor menyelenggarakan kegiatan belajar-mengajar 
-                        sistem asrama (Islamic Boarding School) berupaya membekali para santrinya 
-                        dengan pengetahuan agama dan umum, serta program pembinaan khusus dengan 
-                        nilai-nilai kepesantrenan.
-                    </p>
-                    
-                    <div class="footer-social">
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                        <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-                    </div>
-                    
-                    <?php
-                    $footerMenuSlug = $options['menu_footer'] ?? '';
-                    if (!empty($footerMenuSlug)):
-                    ?>
-                        <div style="margin-top: 1.75rem; display: flex; flex-wrap: wrap; gap: 0.85rem;">
-                        <?php
-                            try {
-                                $footerMenu = \App\Core\Application::getInstance()->menus()->getResolvedTree($footerMenuSlug);
-                                foreach ($footerMenu as $item): 
-                                    $target = !empty($item['open_new_tab']) ? ' target="_blank" rel="noopener noreferrer"' : '';
-                        ?>
-                                    <a href="<?= htmlspecialchars($item['url']) ?>"<?= $target ?> style="font-size: 0.85rem; color: #fff; text-decoration: underline; opacity: 0.85; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'"><?= htmlspecialchars($item['label']) ?></a>
-                        <?php
-                                endforeach;
-                            } catch (\Exception $e) {}
-                        ?>
-                        </div>
-                    <?php endif; ?>
-                <?php endif; ?>
+                <?= $global['footer_3'] ?? '' ?>
             </div>
         </div>
     </footer>
+    <?php endif; ?>
     
     <div class="site-footer-bottom">
         <div class="footer-bottom-container">
