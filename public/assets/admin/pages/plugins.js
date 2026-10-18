@@ -1,22 +1,60 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const tbody = document.getElementById('plugin-tbody');
     const uploadForm = document.getElementById('plugin-upload-form');
+    const fileInput = document.getElementById('plugin-zip');
 
     function loadPlugins() {
         Admin.request('GET', '/admin/api/plugins')
-            .then(res => renderPlugins(res.data))
+            .then(res => renderPlugins(res.data || []))
             .catch(err => Admin.alert(err.message, true));
+    }
+
+    // Map icons and colors for famous plugins
+    function getPluginVisuals(dir, name) {
+        const lower = (dir + ' ' + name).toLowerCase();
+        if (lower.includes('slider')) {
+            return {
+                icon: '🎬',
+                bg: 'linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)',
+                color: '#ffffff'
+            };
+        }
+        if (lower.includes('card') || lower.includes('builder')) {
+            return {
+                icon: '🃏',
+                bg: 'linear-gradient(135deg, #4f46e5 0%, #818cf8 100%)',
+                color: '#ffffff'
+            };
+        }
+        if (lower.includes('galeri') || lower.includes('photo') || lower.includes('gallery')) {
+            return {
+                icon: '🖼️',
+                bg: 'linear-gradient(135deg, #ea580c 0%, #fb923c 100%)',
+                color: '#ffffff'
+            };
+        }
+        return {
+            icon: '🧩',
+            bg: 'linear-gradient(135deg, #334155 0%, #64748b 100%)',
+            color: '#ffffff'
+        };
     }
 
     function renderPlugins(plugins) {
         const container = document.getElementById('plugin-list-view');
+        const statBadge = document.getElementById('plugins-stat-badge');
+        
+        const activeCount = plugins.filter(p => p.is_active).length;
+        if (statBadge) {
+            statBadge.textContent = `${plugins.length} Plugin · ${activeCount} Aktif`;
+        }
+
         container.innerHTML = '';
         if (plugins.length === 0) {
             container.innerHTML = `
-                <div class="empty-state" style="grid-column: 1 / -1; margin-top: 2rem;">
-                    <div class="empty-state-icon">🔌</div>
-                    <h4 class="empty-state-title">Belum ada plugin</h4>
-                    <p class="empty-state-desc">Unggah plugin dalam format .zip untuk menambahkan fitur baru.</p>
+                <div class="empty-state" style="grid-column: 1 / -1; margin-top: 2rem; background: #fff; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 3rem 1.5rem; text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">🔌</div>
+                    <h4 style="margin: 0; font-size: 1.2rem; color: #1e293b;">Belum Ada Plugin</h4>
+                    <p style="color: #64748b; font-size: 0.9rem; margin: 0.5rem 0 1.5rem 0;">Unggah berkas plugin berekstensi .zip untuk menambahkan fitur baru.</p>
                 </div>
             `;
             return;
@@ -24,43 +62,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
         plugins.forEach(ext => {
             const card = document.createElement('div');
-            card.style.cssText = `background: #fff; border: 1px solid var(--admin-border); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; transition: all 0.2s; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.02);`;
-            if (ext.is_active) {
-                card.style.borderTop = '3px solid var(--admin-primary)';
-            }
+            card.className = `plugin-card-modern ${ext.is_active ? 'is-active' : 'is-inactive'}`;
             
-            const btnClass = ext.is_active ? 'btn-ghost' : 'btn-success';
-            const btnText = ext.is_active ? 'Nonaktifkan' : 'Aktifkan';
-            
+            const visuals = getPluginVisuals(ext.directory, ext.name);
+            const authorName = ext.author || 'mycms team';
+            const authorHtml = ext.author_url 
+                ? `<a href="${Admin.escapeHtml(ext.author_url)}" target="_blank" rel="noopener noreferrer" style="color:var(--admin-primary); text-decoration:none;"><strong>${Admin.escapeHtml(authorName)}</strong></a>`
+                : `<strong>${Admin.escapeHtml(authorName)}</strong>`;
+
             card.innerHTML = `
-                <div style="padding: 1.25rem; flex: 1;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                        <h3 style="margin: 0; font-size: 1.1rem; color: #1e293b; font-weight: 700;">${Admin.escapeHtml(ext.name)}</h3>
-                        <span class="badge ${ext.is_active ? 'badge-success' : 'badge-secondary'}" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">
-                            ${ext.is_active ? 'Aktif' : 'Nonaktif'}
-                        </span>
+                <div class="plugin-card-top">
+                    <div class="plugin-header-row">
+                        <div class="plugin-icon-wrap" style="background: ${visuals.bg}; color: ${visuals.color};">
+                            ${visuals.icon}
+                        </div>
+                        <div class="plugin-title-wrap">
+                            <h3 class="plugin-title">${Admin.escapeHtml(ext.name)}</h3>
+                            <span class="plugin-status-badge ${ext.is_active ? 'active' : 'inactive'}">
+                                ${ext.is_active ? '● Aktif' : '○ Nonaktif'}
+                            </span>
+                        </div>
                     </div>
-                    <p style="margin: 0 0 1rem 0; font-size: 0.9rem; color: #475569; line-height: 1.5;">${Admin.escapeHtml(ext.description)}</p>
-                    
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.8rem; color: #94a3b8; align-items: center;">
-                        <span style="display: flex; align-items: center; gap: 0.25rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg> v${Admin.escapeHtml(ext.version)}</span>
-                        <span style="display: flex; align-items: center; gap: 0.25rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg> ${Admin.escapeHtml(ext.directory)}</span>
+
+                    <p class="plugin-desc">${Admin.escapeHtml(ext.description || 'Tidak ada deskripsi.')}</p>
+
+                    <div class="plugin-meta-bar">
+                        <div class="plugin-author-badge">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            <span>Oleh ${authorHtml}</span>
+                        </div>
+                        <div class="plugin-tags-group">
+                            <span class="plugin-pill" title="Versi">v${Admin.escapeHtml(ext.version || '1.0.0')}</span>
+                            <span class="plugin-pill" title="Folder direktori">📁 ${Admin.escapeHtml(ext.directory)}</span>
+                        </div>
                     </div>
                 </div>
-                
-                <div style="padding: 0.75rem 1.25rem; background: #f8fafc; border-top: 1px solid var(--admin-border); display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+
+                <div class="plugin-card-actions">
                     ${ext.is_active && ext.admin_url ? `
-                        <a href="${Admin.escapeHtml(ext.admin_url)}" class="btn btn-sm btn-ghost" style="color: var(--admin-primary); flex: 1; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--admin-primary); text-align: center;">
-                            Kelola
+                        <a href="${Admin.escapeHtml(ext.admin_url)}" class="btn btn-sm btn-primary" style="display: inline-flex; align-items: center; gap: 6px; padding: 0.45rem 1.1rem; font-weight: 600; border-radius: 6px;">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span>Kelola</span>
                         </a>
                     ` : ''}
-                    <button class="btn ${btnClass} btn-sm toggle-btn" data-dir="${Admin.escapeHtml(ext.directory)}" data-active="${ext.is_active ? 0 : 1}" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; text-align: center; ${ext.is_active ? 'color: var(--admin-danger); border: 1px solid #fca5a5;' : ''}">
-                        ${btnText}
+
+                    <button type="button" class="btn btn-sm toggle-btn" data-dir="${Admin.escapeHtml(ext.directory)}" data-active="${ext.is_active ? 0 : 1}" style="${ext.is_active ? 'color: #e11d48; background: #fff1f2; border: 1px solid #fecdd3;' : 'background: var(--admin-primary, #0f766e); color: #fff; border: none;'} padding: 0.45rem 1rem; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">
+                        <span>${ext.is_active ? 'Nonaktifkan' : 'Aktifkan'}</span>
                     </button>
+
                     ${!ext.is_active ? `
-                    <button class="btn btn-ghost btn-sm delete-btn" data-delete-dir="${Admin.escapeHtml(ext.directory)}" style="color: var(--admin-danger); width: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: 1px solid transparent;" title="Hapus Permanen">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                    </button>
+                        <button type="button" class="btn btn-ghost btn-sm delete-btn" data-delete-dir="${Admin.escapeHtml(ext.directory)}" style="color: #dc2626; width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px;" title="Hapus Permanen">
+                            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
                     ` : ''}
                 </div>
             `;
@@ -69,15 +122,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelectorAll('.toggle-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const dir = e.target.getAttribute('data-dir');
-                const active = e.target.getAttribute('data-active');
+                const target = e.currentTarget;
+                const dir = target.getAttribute('data-dir');
+                const active = target.getAttribute('data-active');
+                target.disabled = true;
+                target.innerHTML = '<span>Memproses...</span>';
                 togglePlugin(dir, active);
             });
         });
 
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
-                const dir = e.target.getAttribute('data-delete-dir');
+                const target = e.currentTarget;
+                const dir = target.getAttribute('data-delete-dir');
                 if (await Admin.confirmDelete(`Yakin ingin menghapus plugin ini secara permanen? Semua data terkait (jika didukung) akan terhapus!`)) {
                     deletePlugin(dir);
                 }
@@ -95,30 +152,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function togglePlugin(directory, isActive) {
-        Admin.request('POST', `/admin/api/plugins/${encodeURIComponent(directory)}/toggle`, { is_active: isActive })
+        Admin.request('POST', `/admin/api/plugins/${encodeURIComponent(directory)}/toggle`, { is_active: parseInt(isActive, 10) })
             .then(res => {
-                Admin.alert(res.message, false);
+                const msg = (res && res.message) ? res.message : 'Status plugin berhasil diubah.';
+                Admin.alert(msg, false);
                 loadPlugins();
             })
-            .catch(err => Admin.alert(err.message, true));
+            .catch(err => {
+                const msg = (err && err.message) ? err.message : 'Gagal mengubah status plugin.';
+                Admin.alert(msg, true);
+                loadPlugins();
+            });
     }
 
-    const fileInput = document.getElementById('plugin-zip');
-    
-    fileInput.addEventListener('change', (e) => {
-        if (!fileInput.files.length) return;
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            if (!fileInput.files.length) return;
 
-        const formData = new FormData();
-        formData.append('zip_file', fileInput.files[0]);
+            const formData = new FormData();
+            formData.append('zip_file', fileInput.files[0]);
 
-        Admin.request('POST', '/admin/api/plugins/upload', formData)
-            .then(res => {
-                Admin.alert(res.message, false);
-                fileInput.value = ''; // Reset
-                loadPlugins();
-            })
-            .catch(err => Admin.alert(err.message, true));
-    });
+            Admin.alert('Mengunggah & menginstal plugin...');
+
+            Admin.request('POST', '/admin/api/plugins/upload', formData)
+                .then(res => {
+                    Admin.alert(res.message, false);
+                    fileInput.value = '';
+                    loadPlugins();
+                })
+                .catch(err => {
+                    Admin.alert(err.message, true);
+                    fileInput.value = '';
+                });
+        });
+    }
 
     loadPlugins();
 });

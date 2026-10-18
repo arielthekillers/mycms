@@ -1,6 +1,9 @@
 {
+    "id": "PluginGaleri",
     "name": "Plugin Galeri Foto",
     "description": "Galeri foto sederhana yang terintegrasi dengan media picker CMS.",
     "version": "1.0.0",
+    "author": "mycms team",
+    "author_url": "https://github.com/mycms",
     "admin_url": "/admin/panel/plugin-galeri"
 }

@@ -3,5 +3,7 @@
     "name": "Card Builder (Advanced)",
     "description": "Buat widget card yang responsif dengan jumlah card tak terbatas (Grid, Scroll, dll).",
     "version": "1.0.0",
+    "author": "mycms team",
+    "author_url": "https://github.com/mycms",
     "admin_url": "/admin/panel/card-builder"
 }

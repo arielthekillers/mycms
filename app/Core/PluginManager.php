@@ -54,6 +54,8 @@ final class PluginManager
                         'name' => $info['name'] ?? $dirName,
                         'description' => $info['description'] ?? '',
                         'version' => $info['version'] ?? '1.0.0',
+                        'author' => !empty($info['author']) ? $info['author'] : 'mycms team',
+                        'author_url' => $info['author_url'] ?? null,
                         'admin_url' => $info['admin_url'] ?? null,
                         'is_active' => $activeMap[$dirName] ?? false,
                     ];
@@ -375,9 +377,9 @@ final class PluginManager
         if (!is_dir($dir)) return;
         $files = array_diff(scandir($dir), ['.', '..']);
         foreach ($files as $file) {
-            (is_dir("$dir/$file")) ? $this->removeDirectory("$dir/$file") : unlink("$dir/$file");
+            (is_dir("$dir/$file")) ? $this->removeDirectory("$dir/$file") : @unlink("$dir/$file");
         }
-        rmdir($dir);
+        @rmdir($dir);
     }
 
     private function copyDirectory(string $src, string $dst): void

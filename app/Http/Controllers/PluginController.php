@@ -28,6 +28,10 @@ final class PluginController
         
         $this->plugins->toggle((string)$dir, $active);
         
+        try {
+            \App\Core\Application::getInstance()->cache->flush();
+        } catch (\Throwable $e) {}
+
         return $response->json([
             'message' => 'Status plugin berhasil diubah.'
         ]);
